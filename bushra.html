@@ -48,3 +48,22 @@
   </style>
 </head>
 <body>
+
+
+
+
+  <button id="no">No 🙃</button>
+<button onclick="yes()">Yes ❤️</button>
+
+<script>
+  const noBtn = document.getElementById("no");
+  noBtn.onmouseover = () => {
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.random() * 80 + "vw";
+    noBtn.style.top = Math.random() * 80 + "vh";
+  };
+
+  function yes() {
+    alert("Yay! I knew it 😘");
+  }
+</script>
