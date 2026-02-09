@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A Story of Us</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fff5f5; color: #333; margin: 0; padding: 20px; }
+        .section { background: white; border-radius: 15px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #e63946; border-bottom: 2px solid #ffb3b3; padding-bottom: 10px; }
+        #map { height: 400px; border-radius: 10px; }
+        .chart-container { width: 100%; max-width: 600px; margin: auto; }
+        img.gee-gif { width: 100%; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>For Bushra: Our World in Data & Maps</h1>
+
+    <div class="section">
+        <h2>📍 Our Memory Map</h2>
+        <p>Every marker is a moment I cherish with you.</p>
+        <div id="map"></div>
+    </div>
+
+    <div class="section">
+        <h2>🌍 How the World Changes (But We Don't)</h2>
+        <p>A satellite view of our favorite spot over the years.</p>
+        <img src="your-gee-timelapse.gif" alt="Satellite Time-lapse" class="gee-gif">
+    </div>
+
+    <div class="section">
+        <h2>📊 Peak "Bushra Hours"</h2>
+        <p>A visualization of when we talk the most.</p>
+        <div class="chart-container">
+            <canvas id="loveChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // --- 1. Map Logic ---
+        const map = L.map('map').setView([23.7104, 90.4074], 13); // Centered on Dhaka
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // Add your markers here
+        const locations = [
+            {coords: [23.7330, 90.3923], text: "Where we first met at Dhaka University! 🎓"},
+            {coords: [23.7937, 90.4066], text: "The best coffee we ever had here. ☕"}
+        ];
+
+        locations.forEach(loc => {
+            L.marker(loc.coords).addTo(map).bindPopup(loc.text);
+        });
+
+        // --- 2. Chart Logic ---
+        const ctx = document.getElementById('loveChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Morning', 'Noon', 'Evening', 'Night', 'Late Night'],
+                datasets: [{
+                    label: 'Heartbeat Intensity',
+                    data: [10, 25, 45, 90, 100], // You can change these numbers!
+                    borderColor: '#e63946',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(230, 57, 70, 0.1)'
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
