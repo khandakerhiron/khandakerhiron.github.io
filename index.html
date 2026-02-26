@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiron Khandaker | Graduate Researcher</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fb;
+            color: #1e2b3a;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* Dark theme variables */
+        body.dark-theme {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .card {
+            max-width: 1100px;
+            width: 100%;
+            background-color: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0,20,40,0.25);
+            overflow: hidden;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        body.dark-theme .card {
+            background-color: #1e1e1e;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.6);
+        }
+
+        .card-content {
+            padding: 2.5rem;
+        }
+
+        /* Profile section */
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .profile {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .profile-image {
+            flex-shrink: 0;
+        }
+
+        .profile-image img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #2c3e50;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: border-color 0.3s;
+        }
+
+        body.dark-theme .profile-image img {
+            border-color: #4a6782;
+        }
+
+        .profile-details {
+            flex: 1;
+        }
+
+        .name {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #0a1929;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        body.dark-theme .name {
+            color: #bdd3f0;
+        }
+
+        .institution {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-theme .institution {
+            color: #9bb7d4;
+        }
+
+        .tagline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0 1.5rem 0;
+        }
+
+        .tag {
+            background-color: #e6f0fa;
+            color: #0a1929;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-theme .tag {
+            background-color: #2a3b4c;
+            color: #d0e0f0;
+        }
+
+        .bio {
+            margin: 1.5rem 0 2rem 0;
+        }
+
+        .bio p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: #f0f5fd;
+            border-radius: 50%;
+            color: #1e2b3a;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background-color: #2c3e50;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        body.dark-theme .social-links a {
+            background-color: #2d3e4f;
+            color: #cfdfef;
+        }
+
+        body.dark-theme .social-links a:hover {
+            background-color: #4f6f8f;
+            color: white;
+        }
+
+        /* Control bar for toggles */
+        .control-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem 2rem 2.5rem;
+            border-top: 1px solid #e0e8f0;
+            transition: border-color 0.3s;
+        }
+
+        body.dark-theme .control-bar {
+            border-top-color: #2e3e4e;
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 2px solid #b0c8da;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #1e2b3a;
+            transition: all 0.2s;
+        }
+
+        body.dark-theme .lang-btn {
+            border-color: #4b637a;
+            color: #d0e0f0;
+        }
+
+        .lang-btn.active {
+            background-color: #1e2b3a;
+            border-color: #1e2b3a;
+            color: white;
+        }
+
+        body.dark-theme .lang-btn.active {
+            background-color: #3f5e7a;
+            border-color: #3f5e7a;
+            color: white;
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #3b4f62;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-theme .theme-btn {
+            color: #f5c542;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem 2.5rem;
+            background-color: #f8fafd;
+            font-size: 0.95rem;
+            color: #5a6f82;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-theme .footer {
+            background-color: #151f2a;
+            color: #9bb1c4;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .card-content {
+                padding: 1.5rem;
+            }
+            .control-bar {
+                padding: 1rem 1.5rem 1.5rem 1.5rem;
+            }
+            .footer {
+                padding: 1rem 1.5rem;
+            }
+            .name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-content">
+            <div class="profile">
+                <div class="profile-image">
+                    <!-- Make sure to upload your photo as hironkhandaker.jpg in the same folder -->
+                    <img src="hironkhandaker.jpg" alt="Hiron Khandaker">
+                </div>
+                <div class="profile-details">
+                    <h1 class="name">Hiron Khandaker</h1>
+                    <div class="institution">University of Dhaka</div>
+                    <div class="tagline">
+                        <span class="tag">GIS & Remote Sensing</span>
+                        <span class="tag">ML & Deep Learning</span>
+                        <span class="tag">GeoAI</span>
+                        <span class="tag">Urban Climate</span>
+                        <span class="tag">Heat Stress</span>
+                    </div>
+
+                    <!-- Bio section (English by default) -->
+                    <div class="bio" id="bio-container">
+                        <!-- Filled via JavaScript -->
+                    </div>
+
+                    <!-- Social media links -->
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/hironkhandaker" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://github.com/khandakerhiron" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/hironkhandaker/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://x.com/KhandakerHiron" target="_blank" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.researchgate.net/profile/Hiron-Khandaker" target="_blank" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
+                        <a href="https://www.youtube.com/@hironkhandaker" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://scholar.google.com/citations?hl=en&user=uEcZf3UAAAAJ" target="_blank" aria-label="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control bar with language and theme toggles -->
+        <div class="control-bar">
+            <div class="lang-toggle">
+                <button class="lang-btn active" id="lang-en">English</button>
+                <button class="lang-btn" id="lang-bn">বাংলা</button>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i> <span class="theme-text">Light</span>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            &copy; 2026 Hiron Khandaker. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Bio texts (HTML formatted)
+            const bioEN = `
+                <p>Hiron Khandaker is a dedicated researcher in the field of Physical Geography and Environment at the University of Dhaka. He is currently pursuing his Master of Science (M.S.) with a focus on urban morphology and land surface temperature using advanced machine learning models. With a strong academic foundation, his expertise spans Environmental Management, Climate Change Adaptation, and Disaster Risk Reduction.</p>
+                <p>Hiron has extensive hands-on experience in GIS and Remote Sensing, having contributed to significant projects involving carbon footprint mapping in refugee camps, fire hazard vulnerability in urban areas, and community earthquake preparedness. His technical toolkit includes proficiency in ArcGIS, Python, R, and Google Earth Engine.</p>
+            `;
+
+            const bioBN = `
+                <p>হিরন খন্দকার ঢাকা বিশ্ববিদ্যালয়ের ভূগোল ও পরিবেশ বিভাগের একজন নিবেদিতপ্রাণ গবেষক । বর্তমানে তিনি এই বিভাগ থেকে ফিজিক্যাল জিওগ্রাফি অ্যান্ড এনভায়রনমেন্টে স্নাতকোত্তর (এম.এস.) করছেন, যেখানে তার গবেষণার মূল বিষয় হলো মেশিন লার্নিং মডেল ব্যবহারের মাধ্যমে নগরীর রূপতাত্ত্বিক সূচক এবং ভূ-পৃষ্ঠের তাপমাত্রার সম্পর্ক বিশ্লেষণ করা । স্নাতক পর্যায়ে ৩.৭৪ (৪.০০ এর মধ্যে) সিজিপিএ অর্জনকারী হিরণের প্রধান আগ্রহের বিষয়গুলো হলো পরিবেশ ব্যবস্থাপনা, জলবায়ু পরিবর্তন অভিযোজন ও প্রশমন এবং দুর্যোগ ঝুঁকি হ্রাস ।</p>
+                <p>হিরণের জিআইএস (GIS) এবং রিমোট সেন্সিং এর ওপর ব্যাপক ব্যবহারিক অভিজ্ঞতা রয়েছে। তিনি রোহিঙ্গা শরণার্থী শিবিরের কার্বন ফুটপ্রিন্ট ম্যাপিং, ঢাকা শহরের অগ্নিকাণ্ড ঝুঁকি বিশ্লেষণ এবং ভূমিকম্প প্রস্তুতি বিষয়ক বিভিন্ন গুরুত্বপূর্ণ প্রকল্পে কাজ করেছেন । কারিগরি দক্ষতার পাশাপাশি তিনি আর্কজিআইএস (ArcGIS), পাইথন (Python), আর (R) এবং গুগল আর্থ ইঞ্জিন (GEE) চালনায় দক্ষ ।</p>
+            `;
+
+            const bioContainer = document.getElementById('bio-container');
+            const langEnBtn = document.getElementById('lang-en');
+            const langBnBtn = document.getElementById('lang-bn');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const themeText = themeToggle.querySelector('.theme-text');
+
+            // Set initial English bio
+            bioContainer.innerHTML = bioEN;
+
+            // Language toggle logic
+            langEnBtn.addEventListener('click', function() {
+                bioContainer.innerHTML = bioEN;
+                langEnBtn.classList.add('active');
+                langBnBtn.classList.remove('active');
+            });
+
+            langBnBtn.addEventListener('click', function() {
+                bioContainer.innerHTML = bioBN;
+                langBnBtn.classList.add('active');
+                langEnBtn.classList.remove('active');
+            });
+
+            // Dark/Light theme toggle
+            const body = document.body;
+
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Dark';
+            }
+
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-theme');
+                if (body.classList.contains('dark-theme')) {
+                    themeIcon.className = 'fas fa-moon';
+                    themeText.textContent = 'Dark';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.className = 'fas fa-sun';
+                    themeText.textContent = 'Light';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Optional: Update footer year dynamically (already 2026)
+            // If you want it to always show current year, uncomment below:
+            // document.querySelector('.footer').innerHTML = `&copy; ${new Date().getFullYear()} Hiron Khandaker. All rights reserved.`;
+        })();
+    </script>
+</body>
+</html>
