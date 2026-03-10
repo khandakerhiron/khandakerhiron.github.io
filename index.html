@@ -305,7 +305,7 @@
                         <!-- Filled via JavaScript -->
                     </div>
 
-                    <!-- Social media links -->
+                    <!-- Social media links + ORCID + CV (added) -->
                     <div class="social-links">
                         <a href="https://www.facebook.com/hironkhandaker" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="https://github.com/khandakerhiron" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -314,6 +314,10 @@
                         <a href="https://www.researchgate.net/profile/Hiron-Khandaker" target="_blank" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
                         <a href="https://www.youtube.com/@hironkhandaker" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                         <a href="https://scholar.google.com/citations?hl=en&user=uEcZf3UAAAAJ" target="_blank" aria-label="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+                        <!-- ORCID iD link (new) -->
+                        <a href="https://orcid.org/0009-0009-4548-5383" target="_blank" aria-label="ORCID"><i class="fab fa-orcid"></i></a>
+                        <!-- CV link (new) - points to hironkhandaker.pdf inside repository -->
+                        <a href="hironkhandaker.pdf" target="_blank" aria-label="Curriculum Vitae (PDF)"><i class="fas fa-file-pdf"></i></a>
                     </div>
                 </div>
             </div>
@@ -396,8 +400,7 @@
             });
 
             // Optional: Update footer year dynamically (already 2026)
-            // If you want it to always show current year, uncomment below:
-            // document.querySelector('.footer').innerHTML = `&copy; ${new Date().getFullYear()} Hiron Khandaker. All rights reserved.`;
+            document.querySelector('.footer').innerHTML = `&copy; ${new Date().getFullYear()} Hiron Khandaker. All rights reserved.`;
         })();
     </script>
 </body>
