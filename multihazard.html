@@ -237,23 +237,10 @@
       transform: translateY(-2px);
     }
 
-    .dev-notice {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--orange);
-      background: rgba(255,123,58,0.1);
-      border: 1px solid rgba(255,123,58,0.25);
-      padding: 5px 14px;
-      border-radius: 6px;
-      animation: fadeUp 0.6s 0.4s ease both;
-    }
-
     /* ── STAT STRIP ───────────────────────────────────────── */
     .stats-strip {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
@@ -425,6 +412,139 @@
       letter-spacing: 0.04em;
     }
 
+    /* ── INFRASTRUCTURE SECTION ───────────────────────────── */
+    #infrastructure { padding: 70px 0; }
+
+    .infra-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 48px;
+    }
+
+    .infra-intro-text .section-desc { margin-bottom: 0; }
+
+    .infra-summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .infra-summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .infra-summary-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--cyan);
+      line-height: 1;
+    }
+
+    .infra-summary-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .infra-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+
+    .infra-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .infra-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+
+    /* Per-card accent colours */
+    .infra-card.school   { --accent: #2196F3; }
+    .infra-card.mosque   { --accent: #4CAF50; }
+    .infra-card.shelter  { --accent: #FF9800; }
+    .infra-card.camp     { --accent: #E91E63; }
+    .infra-card.hospital { --accent: #F44336; }
+    .infra-card.police   { --accent: #9C27B0; }
+    .infra-card.fire     { --accent: #FF5722; }
+    .infra-card.community{ --accent: #00BCD4; }
+
+    .infra-card { border-color: rgba(var(--accent-rgb, 0,200,255), 0.15); }
+    .infra-card:hover { border-color: var(--accent, var(--cyan)); }
+    .infra-card::before { background: var(--accent, var(--cyan)); }
+
+    .infra-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .infra-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .infra-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .infra-tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--accent, var(--cyan)) 15%, transparent);
+      color: var(--accent, var(--cyan));
+      border: 1px solid color-mix(in srgb, var(--accent, var(--cyan)) 30%, transparent);
+    }
+
+    .infra-note {
+      margin-top: 28px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .infra-note strong { color: var(--text); }
+
     /* ── METHODS SECTION ──────────────────────────────────── */
     #methods { padding: 70px 0; }
 
@@ -545,7 +665,7 @@
       transition: width 1s ease;
     }
 
-    .bar-land { background: linear-gradient(90deg, #22d984, #00c8ff); }
+    .bar-land  { background: linear-gradient(90deg, #22d984, #00c8ff); }
     .bar-flood { background: linear-gradient(90deg, #00c8ff, #004aad); }
 
     .weight-val {
@@ -605,9 +725,10 @@
       margin-bottom: 8px;
     }
 
-    .tag-land { background: rgba(34,217,132,0.15); color: var(--green); }
-    .tag-flood { background: rgba(0,200,255,0.15); color: var(--cyan); }
-    .tag-both { background: rgba(255,123,58,0.15); color: var(--orange); }
+    .tag-land  { background: rgba(34,217,132,0.15);  color: var(--green);  }
+    .tag-flood { background: rgba(0,200,255,0.15);   color: var(--cyan);   }
+    .tag-both  { background: rgba(255,123,58,0.15);  color: var(--orange); }
+    .tag-infra { background: rgba(255,61,90,0.15);   color: var(--red);    }
 
     .source-name {
       font-size: 13px;
@@ -628,10 +749,7 @@
       text-align: center;
     }
 
-    .footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
 
     .footer-logo {
       font-family: var(--font-head);
@@ -664,10 +782,7 @@
 
     .footer-links a:hover { color: var(--cyan); }
 
-    .footer-copy {
-      font-size: 12px;
-      color: rgba(122,160,188,0.5);
-    }
+    .footer-copy { font-size: 12px; color: rgba(122,160,188,0.5); }
 
     /* ── ANIMATIONS ───────────────────────────────────────── */
     @keyframes fadeUp {
@@ -687,19 +802,27 @@
     }
 
     /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .infra-grid         { grid-template-columns: repeat(2, 1fr); }
+      .infra-intro        { grid-template-columns: 1fr; gap: 24px; }
+    }
+
     @media (max-width: 768px) {
-      .stats-strip  { grid-template-columns: repeat(2, 1fr); }
+      .stats-strip  { grid-template-columns: repeat(3, 1fr); }
       .two-col      { grid-template-columns: 1fr; }
       .ahp-grid     { grid-template-columns: 1fr; }
       .source-grid  { grid-template-columns: repeat(2, 1fr); }
       .nav-links    { display: none; }
       .map-url      { display: none; }
       .map-frame-wrap { padding-bottom: 80%; }
+      .infra-grid   { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 480px) {
-      .source-grid { grid-template-columns: 1fr; }
-      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .source-grid  { grid-template-columns: 1fr; }
+      .stats-strip  { grid-template-columns: 1fr 1fr; }
+      .infra-grid   { grid-template-columns: 1fr 1fr; }
+      .infra-summary-box { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -714,9 +837,10 @@
   <!-- NAV -->
   <nav>
     <div class="nav-inner">
-      <a href="#" class="nav-logo">🌏 <span> RIMES -Multi-Hazard Early Warning Innovation Challenge Mapathon 2026 </span></a>
+      <a href="#" class="nav-logo">🌏 <span>RIMES — Multi-Hazard Early Warning Innovation Challenge Mapathon 2026</span></a>
       <ul class="nav-links">
         <li><a href="#map">Live Map</a></li>
+        <li><a href="#infrastructure">Infrastructure</a></li>
         <li><a href="#methods">Methodology</a></li>
         <li><a href="#ahp">AHP Weights</a></li>
         <li><a href="#data">Data Sources</a></li>
@@ -747,10 +871,6 @@
           ⚙ View on GitHub
         </a>
       </div>
-
-      <div class="dev-notice">
-        🚧 Under active development — infrastructure exposure layers coming soon !!!
-      </div>
     </div>
   </section>
 
@@ -770,6 +890,10 @@
         <div class="stat-label">Flood Factors</div>
       </div>
       <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Infra Categories</div>
+      </div>
+      <div class="stat-item">
         <div class="stat-num">30m</div>
         <div class="stat-label">Spatial Resolution</div>
       </div>
@@ -782,8 +906,10 @@
       <p class="section-label reveal">Interactive Application</p>
       <h2 class="section-title reveal">Explore the Risk Map</h2>
       <p class="section-desc reveal">
-        Toggle between landslide and flood risk layers. Click any Upazila
-        to view risk distribution charts and census-based demographic data.
+        Toggle between landslide and flood risk layers, and switch on
+        critical infrastructure overlays. Click any Upazila to view
+        risk distribution charts, infrastructure exposure counts,
+        and census-based demographic data.
       </p>
 
       <div class="map-card reveal">
@@ -816,6 +942,117 @@
             title="Chattagram Peninsula Multi-Hazard Map">
           </iframe>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       INFRASTRUCTURE EXPOSURE  ← NEW SECTION
+  ════════════════════════════════════════════════════════ -->
+  <section id="infrastructure">
+    <div class="wrapper">
+      <p class="section-label reveal">Critical Infrastructure Exposure</p>
+      <h2 class="section-title reveal">At-Risk Infrastructure Mapping</h2>
+
+      <div class="infra-intro">
+        <div class="infra-intro-text reveal">
+          <p class="section-desc">
+            Over 3,500 critical infrastructure points across
+            Chattogram, Bandarban, Rangamati and Cox's Bazar have been
+            mapped from OpenStreetMap and overlaid on the hazard layers.
+            Clicking any Upazila in the live map reveals the exact count
+            of each infrastructure type within that administrative unit —
+            enabling targeted disaster preparedness planning.
+          </p>
+        </div>
+
+        <div class="infra-summary-box reveal">
+          <div class="infra-summary-item">
+            <span class="infra-summary-num">4</span>
+            <span class="infra-summary-label">Districts Covered</span>
+          </div>
+          <div class="infra-summary-item">
+            <span class="infra-summary-num">3,500+</span>
+            <span class="infra-summary-label">POIs Mapped</span>
+          </div>
+          <div class="infra-summary-item">
+            <span class="infra-summary-num">8</span>
+            <span class="infra-summary-label">Asset Categories</span>
+          </div>
+          <div class="infra-summary-item">
+            <span class="infra-summary-num">OSM</span>
+            <span class="infra-summary-label">Data Source</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8-card grid -->
+      <div class="infra-grid">
+
+        <div class="infra-card school reveal">
+          <span class="infra-icon">🏫</span>
+          <div class="infra-name">Schools &amp; Colleges</div>
+          <div class="infra-desc">Primary, secondary, and tertiary educational facilities — high daytime occupancy makes these critical evacuation reference points.</div>
+          <span class="infra-tag">Education</span>
+        </div>
+
+        <div class="infra-card mosque reveal">
+          <span class="infra-icon">🕌</span>
+          <div class="infra-name">Mosques</div>
+          <div class="infra-desc">Places of worship that serve dual roles as community gathering points and informal shelters during disaster events.</div>
+          <span class="infra-tag">Community</span>
+        </div>
+
+        <div class="infra-card shelter reveal">
+          <span class="infra-icon">🏠</span>
+          <div class="infra-name">Shelters</div>
+          <div class="infra-desc">Designated emergency shelters and social facilities — the first line of refuge for displaced populations during flood and landslide events.</div>
+          <span class="infra-tag">Emergency</span>
+        </div>
+
+        <div class="infra-card camp reveal">
+          <span class="infra-icon">⛺</span>
+          <div class="infra-name">Rohingya Refugee Camps</div>
+          <div class="infra-desc">Densely populated camp settlements in Cox's Bazar — particularly vulnerable to both landslide and flood hazards due to terrain and housing conditions.</div>
+          <span class="infra-tag">High Vulnerability</span>
+        </div>
+
+        <div class="infra-card hospital reveal">
+          <span class="infra-icon">🏥</span>
+          <div class="infra-name">Hospitals &amp; Clinics</div>
+          <div class="infra-desc">Medical facilities whose functionality is critical before, during, and after disaster events. Disruption has cascading impacts on emergency response capacity.</div>
+          <span class="infra-tag">Health</span>
+        </div>
+
+        <div class="infra-card police reveal">
+          <span class="infra-icon">🚔</span>
+          <div class="infra-name">Police Stations</div>
+          <div class="infra-desc">Law enforcement and coordination nodes that anchor emergency response operations and public order during disaster scenarios.</div>
+          <span class="infra-tag">Security</span>
+        </div>
+
+        <div class="infra-card fire reveal">
+          <span class="infra-icon">🚒</span>
+          <div class="infra-name">Fire Stations</div>
+          <div class="infra-desc">First-responder facilities for fire and rescue operations. Accessibility and operational status directly affect post-disaster response times.</div>
+          <span class="infra-tag">Response</span>
+        </div>
+
+        <div class="infra-card community reveal">
+          <span class="infra-icon">🏛</span>
+          <div class="infra-name">Community Centres</div>
+          <div class="infra-desc">Multi-purpose public buildings that serve as coordination hubs, relief distribution points, and temporary shelters during extended displacement.</div>
+          <span class="infra-tag">Community</span>
+        </div>
+
+      </div>
+
+      <div class="infra-note reveal">
+        <strong>How to use in the map:</strong> Open the live app above → use the
+        <em>Layer Controls</em> panel (top-left) to toggle individual infrastructure
+        overlays on/off. Click any Upazila polygon to see the exact count of each
+        asset type exposed within that area, alongside hazard risk percentages and
+        demographic statistics.
       </div>
     </div>
   </section>
@@ -880,7 +1117,6 @@
 
       <div class="ahp-grid">
 
-        <!-- LANDSLIDE WEIGHTS -->
         <div class="ahp-card reveal">
           <h3>🏔 Landslide Susceptibility Weights</h3>
 
@@ -901,7 +1137,6 @@
           <div class="cr-badge">✅ CR = 0.0246 — Consistent (CR &lt; 0.1)</div>
         </div>
 
-        <!-- FLOOD WEIGHTS -->
         <div class="ahp-card reveal">
           <h3>🌊 Flood Risk Assessment Weights</h3>
 
@@ -944,6 +1179,10 @@
         <div class="source-card reveal"><span class="source-tag tag-both">Both</span><div class="source-name">Distance from Roads</div><div class="source-origin">OpenStreetMap (OSM)</div></div>
         <div class="source-card reveal"><span class="source-tag tag-flood">Flood</span><div class="source-name">TWI / SPI / Curvature</div><div class="source-origin">Derived from SRTM DEM</div></div>
         <div class="source-card reveal"><span class="source-tag tag-both">Both</span><div class="source-name">Census Demographics</div><div class="source-origin">BBS Census 2022 — Table P35</div></div>
+        <!-- NEW infra sources -->
+        <div class="source-card reveal"><span class="source-tag tag-infra">Infrastructure</span><div class="source-name">Schools, Mosques, Shelters</div><div class="source-origin">OpenStreetMap (OSMnx)</div></div>
+        <div class="source-card reveal"><span class="source-tag tag-infra">Infrastructure</span><div class="source-name">Hospitals, Police, Fire Stations</div><div class="source-origin">OpenStreetMap (OSMnx)</div></div>
+        <div class="source-card reveal"><span class="source-tag tag-infra">Infrastructure</span><div class="source-name">Rohingya Refugee Camps</div><div class="source-origin">OpenStreetMap (OSMnx) · UNHCR</div></div>
       </div>
     </div>
   </section>
@@ -953,12 +1192,13 @@
     <div class="footer-inner">
       <div class="footer-logo">🌏 Chattagram Peninsula Multi-Hazard Mapping</div>
       <p class="footer-desc">
-        MCDA-AHP based landslide susceptibility and flood risk assessment
-        for Chattagram Division, Bangladesh. Built with Google Earth Engine.
+        MCDA-AHP based landslide susceptibility, flood risk assessment,
+        and critical infrastructure exposure mapping for Chattagram Division,
+        Bangladesh. Built with Google Earth Engine.
       </p>
       <div class="footer-links">
         <a href="https://custom-mix-458510-j8.projects.earthengine.app/view/chattagram-peninsula-multi-hazard-mapping" target="_blank">Live App</a>
-        <a href="https://github.com/your-username/chattagram-multihazard-mapping" target="_blank">GitHub</a>
+        <a href="https://github.com/khandakerhiron/Chattagram_Peninsula_MultiHazard_Mapping" target="_blank">GitHub</a>
         <a href="https://www.bbs.gov.bd" target="_blank">BBS Census Data</a>
         <a href="https://earthengine.google.com" target="_blank">Google Earth Engine</a>
       </div>
@@ -976,7 +1216,7 @@
     });
 
     // ── Scroll reveal ──────────────────────────────────────
-    const reveals = document.querySelectorAll('.reveal');
+    const reveals  = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry, i) {
         if (entry.isIntersecting) {
