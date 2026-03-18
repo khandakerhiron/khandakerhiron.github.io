@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hiron Khandaker | Graduate Researcher</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0b1120;
+      --surface:  #101828;
+      --surface2: #162032;
+      --gold:     #c9a84c;
+      --gold-glow:rgba(201,168,76,.13);
+      --text:     #dde4ed;
+      --muted:    #6b7f96;
+      --border:   rgba(201,168,76,.14);
+      --accent:   #3a7bd5;
+      --radius:   1rem;
+    }
+    body.light {
+      --bg:       #f3f5f9;
+      --surface:  #ffffff;
+      --surface2: #eaf0f8;
+      --gold:     #8a6010;
+      --gold-glow:rgba(138,96,16,.09);
+      --text:     #1a2236;
+      --muted:    #5a6e85;
+      --border:   rgba(138,96,16,.18);
+      --accent:   #2460b0;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background .4s,color .4s;
+    }
+    .bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .bg-orbs::before{
+      content:'';position:absolute;
+      width:700px;height:700px;border-radius:50%;
+      background:radial-gradient(circle,rgba(58,123,213,.09) 0%,transparent 70%);
+      top:-200px;left:-150px;
+      animation:orbFloat 18s ease-in-out infinite alternate;
+    }
+    .bg-orbs::after{
+      content:'';position:absolute;
+      width:600px;height:600px;border-radius:50%;
+      background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);
+      bottom:-150px;right:-100px;
+      animation:orbFloat 22s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes orbFloat{from{transform:translate(0,0) scale(1);}to{transform:translate(40px,30px) scale(1.1);}}
+    .grid-texture{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+      background-size:52px 52px;
+    }
+    body.light .grid-texture{
+      background-image:linear-gradient(rgba(0,0,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.03) 1px,transparent 1px);
+    }
+    .wrapper{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 7rem;}
+    .fade-up{opacity:0;transform:translateY(28px);animation:fadeUp .7s ease forwards;}
+    @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+    /* TOP BAR */
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:3.5rem;animation-delay:.05s;}
+    .logo-mark{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--border);padding:.35rem 1rem;border-radius:30px;background:var(--gold-glow);}
+    .bar-controls{display:flex;gap:.6rem;align-items:center;}
+    .ctrl-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.78rem;padding:.32rem .9rem;border-radius:30px;cursor:pointer;transition:all .2s;}
+    .ctrl-btn.active,.ctrl-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+    .theme-pill{display:flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--border);color:var(--muted);font-size:.82rem;padding:.32rem .9rem;border-radius:30px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+    .theme-pill:hover{border-color:var(--gold);color:var(--gold);}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr 200px;gap:2.5rem;align-items:center;margin-bottom:3rem;animation-delay:.12s;}
+    @media(max-width:620px){.hero{grid-template-columns:1fr;}.avatar-col{display:flex;justify-content:center;order:-1;}}
+    .eyebrow{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.85rem;}
+    h1.name{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,5.5vw,3.8rem);font-weight:900;line-height:1.04;color:var(--text);margin-bottom:.5rem;}
+    .subtitle{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:1.4rem;}
+    .subtitle strong{color:var(--text);font-weight:500;}
+    .typing-wrap{font-family:'Playfair Display',serif;font-size:1.15rem;font-style:italic;color:var(--gold);min-height:1.8rem;margin-bottom:1.6rem;}
+    .cursor{display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;margin-left:2px;animation:blink .85s step-end infinite;}
+    @keyframes blink{50%{opacity:0;}}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.8rem;}
+    .tag{font-size:.7rem;font-family:'DM Mono',monospace;letter-spacing:.08em;padding:.28rem .8rem;border-radius:30px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;transition:all .25s;cursor:default;}
+    .tag:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+    .social-row{display:flex;gap:.7rem;flex-wrap:wrap;}
+    .social-row a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);color:var(--muted);font-size:1rem;text-decoration:none;transition:all .22s;background:var(--surface);}
+    .social-row a:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);transform:translateY(-3px);}
+
+    /* AVATAR */
+    .avatar-ring{width:180px;height:180px;border-radius:50%;padding:3px;background:conic-gradient(from 0deg,var(--gold),var(--accent),var(--gold));animation:rotateBorder 8s linear infinite;box-shadow:0 0 40px rgba(201,168,76,.18);margin:0 auto;}
+    @keyframes rotateBorder{to{transform:rotate(360deg);}}
+    .avatar-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;border:4px solid var(--surface);background:var(--surface2);}
+    .avatar-inner img{width:100%;height:100%;object-fit:cover;display:block;}
+    .avatar-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--gold);}
+
+    /* DIVIDER */
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0;}
+
+    /* SECTION */
+    .section{margin-bottom:3rem;}
+    .section-label{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem;}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* BIO */
+    .bio p{color:var(--muted);line-height:1.9;margin-bottom:1rem;font-size:.97rem;text-align:justify;}
+    .bio p:last-child{margin-bottom:0;}
+
+    /* TIMELINE */
+    .timeline{display:flex;flex-direction:column;gap:1.2rem;}
+    .tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;}
+    .tcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),var(--accent));border-radius:3px 0 0 3px;opacity:0;transition:opacity .25s;}
+    .tcard:hover{border-color:var(--gold);transform:translateX(4px);}
+    .tcard:hover::before{opacity:1;}
+    .tcard-meta{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;}
+    .tcard-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;}
+    .tcard-date{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--gold);white-space:nowrap;padding:.2rem .6rem;border:1px solid var(--border);border-radius:20px;background:var(--gold-glow);flex-shrink:0;}
+    .tcard-org{font-size:.85rem;color:var(--accent);margin-bottom:.5rem;font-weight:500;}
+    .tcard-body{font-size:.85rem;color:var(--muted);line-height:1.75;}
+    .tcard-body ul{padding-left:1.1rem;margin-top:.4rem;}
+    .tcard-body li{margin-bottom:.25rem;}
+    .badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-family:'DM Mono',monospace;padding:.22rem .75rem;border-radius:20px;border:1px solid rgba(58,123,213,.3);color:var(--accent);background:rgba(58,123,213,.07);margin-top:.5rem;}
+
+    /* SKILLS */
+    .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;}
+    .skill-item{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:.75rem 1rem;transition:all .22s;}
+    .skill-item:hover{border-color:var(--gold);background:var(--gold-glow);}
+    .skill-name{font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.4rem;}
+    .skill-level{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.06em;}
+    .skill-bar{height:2px;background:var(--surface2);border-radius:2px;margin-top:.5rem;overflow:hidden;}
+    .skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--accent));animation:barGrow 1.2s ease forwards;}
+    @keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+    /* FIELDWORK */
+    .field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.9rem;}
+    .field-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;transition:all .22s;}
+    .field-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+    .field-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);margin-bottom:.4rem;}
+    .field-title{font-size:.88rem;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:.4rem;}
+    .field-body{font-size:.78rem;color:var(--muted);line-height:1.6;}
+
+    /* AWARDS */
+    .award-list{display:flex;flex-direction:column;gap:.9rem;}
+    .award-item{display:flex;align-items:flex-start;gap:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.3rem;transition:all .22s;}
+    .award-item:hover{border-color:var(--gold);}
+    .award-icon{font-size:1.3rem;color:var(--gold);flex-shrink:0;margin-top:.1rem;}
+    .award-title{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.25rem;}
+    .award-body{font-size:.82rem;color:var(--muted);line-height:1.6;}
+
+    /* PUBLICATIONS */
+    .pub-list{display:flex;flex-direction:column;gap:.9rem;}
+    .pub-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.3rem;transition:all .22s;}
+    .pub-item:hover{border-color:var(--gold);}
+    .pub-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:.3rem;}
+    .pub-title{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;color:var(--text);margin-bottom:.3rem;}
+    .pub-meta{font-size:.8rem;color:var(--muted);}
+    .pub-meta a{color:var(--accent);text-decoration:none;}
+    .pub-meta a:hover{text-decoration:underline;}
+
+    /* FOOTER */
+    .footer{margin-top:4rem;border-top:1px solid var(--border);padding-top:2rem;text-align:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+    .footer span.gold{color:var(--gold);}
+
+    @media(max-width:500px){
+      .wrapper{padding:1.5rem 1rem 5rem;}
+      .skill-grid{grid-template-columns:repeat(2,1fr);}
+      .field-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs"></div>
+<div class="grid-texture"></div>
+
+<div class="wrapper">
+
+  <!-- TOP BAR -->
+  <nav class="topbar fade-up">
+    <div class="logo-mark">hk · researcher</div>
+    <div class="bar-controls">
+      <button class="ctrl-btn active" id="lang-en">English</button>
+      <button class="ctrl-btn" id="lang-bn">বাংলা</button>
+      <button class="theme-pill" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-icon"></i>
+        <span id="theme-text">Dark</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div class="hero-text">
+      <div class="eyebrow">Graduate Researcher · University of Dhaka</div>
+      <h1 class="name">Hiron<br>Khandaker</h1>
+      <p class="subtitle"><strong>M.S. Candidate</strong> — Physical Geography &amp; Environment</p>
+      <div class="typing-wrap"><span id="typing-text"></span><span class="cursor"></span></div>
+      <div class="tags">
+        <span class="tag">GIS &amp; Remote Sensing</span>
+        <span class="tag">ML &amp; Deep Learning</span>
+        <span class="tag">GeoAI</span>
+        <span class="tag">Urban Climate</span>
+        <span class="tag">Heat Stress</span>
+        <span class="tag">Disaster Risk</span>
+      </div>
+      <div class="social-row">
+        <a href="https://www.facebook.com/hironkhandaker" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://github.com/khandakerhiron" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/hironkhandaker/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://x.com/KhandakerHiron" target="_blank" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.researchgate.net/profile/Hiron-Khandaker" target="_blank" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
+        <a href="https://www.youtube.com/@hironkhandaker" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://scholar.google.com/citations?hl=en&user=uEcZf3UAAAAJ" target="_blank" aria-label="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+        <a href="https://orcid.org/0009-0009-4548-5383" target="_blank" aria-label="ORCID"><i class="fab fa-orcid"></i></a>
+        <a href="hironkhandaker.pdf" target="_blank" aria-label="Download CV"><i class="fas fa-file-pdf"></i></a>
+      </div>
+    </div>
+    <div class="avatar-col">
+      <div class="avatar-ring">
+        <div class="avatar-inner">
+          <img src="hironkhandaker.jpg" alt="Hiron Khandaker"
+               onerror="this.style.display='none';document.getElementById('av-ph').style.display='flex'">
+          <div class="avatar-placeholder" id="av-ph" style="display:none">HK</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">About</div>
+    <div class="bio" id="bio-container"></div>
+  </section>
+
+  <!-- EDUCATION -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Academic Background</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Master of Science (M.S.) — Physical Geography &amp; Environment</div>
+          <div class="tcard-date">Expected Dec 2026</div>
+        </div>
+        <div class="tcard-org">Dept. of Geography and Environment, University of Dhaka</div>
+        <div class="tcard-body">
+          <strong style="color:var(--text)">Thesis:</strong> Understanding the Effects of Urban Morphological Indicators on Land Surface Temperature in Dhaka North City Corporation — Combining Machine Learning and MGWR Models
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Bachelor of Science (B.S.) — Geography &amp; Environment</div>
+          <div class="tcard-date">16 Nov 2025</div>
+        </div>
+        <div class="tcard-org">University of Dhaka</div>
+        <div class="tcard-body">CGPA — <strong style="color:var(--gold)">3.74</strong> / 4.00</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH GRANT -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Research Grant</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Government Research Grant (2025–26)</div>
+          <div class="tcard-date">Jan 2026</div>
+        </div>
+        <div class="tcard-org">Dept. of Disaster Management · Ministry of Disaster Management &amp; Relief, Bangladesh</div>
+        <div class="tcard-body">
+          Assessing Community Earthquake Preparedness, Perception and Response in Madhabdi and Narsingdi Municipality, Narsingdi.
+        </div>
+        <div><span class="badge"><i class="fas fa-award"></i> Government-Funded Research</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH EXPERIENCE -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Research Experience</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Project Research Assistant</div>
+          <div class="tcard-date">Nov – Dec 2025</div>
+        </div>
+        <div class="tcard-org">Carbon Footprint Mapping of Humanitarian Operations in Rohingya Refugee Camps · UNHCR / NGO Forum for Energy</div>
+        <div class="tcard-body">
+          <ul>
+            <li>Five-day intensive fieldwork in refugee camps in Ukhia and Teknaf, Cox's Bazar</li>
+            <li>Prepared FGD questionnaires and data requisition checklists</li>
+            <li>Data processing in Excel; spatial visualization and mapping in ArcGIS Desktop</li>
+            <li>Report writing and formal documentation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Research Assistant</div>
+          <div class="tcard-date">Dec 2024 – May 2025</div>
+        </div>
+        <div class="tcard-org">GIS-based Fire Hazard Vulnerability Mapping of Residential-turned-Eatery Buildings · DRTMC, University of Dhaka</div>
+        <div class="tcard-body">
+          <ul>
+            <li>Frequent field visits; questionnaire design and survey implementation</li>
+            <li>Data collection via Kobo Collect; processing and analysis in Excel</li>
+            <li>Geospatial visualization and mapping in ArcGIS Desktop</li>
+            <li>Manuscript writing for peer-reviewed journal publication</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Project Research Assistant</div>
+          <div class="tcard-date">Oct 2023 – Apr 2024</div>
+        </div>
+        <div class="tcard-org">Situation Analysis of Fire Disaster in Dhaka City · DRTMC, University of Dhaka</div>
+        <div class="tcard-body">
+          <ul>
+            <li>Literature review, questionnaire preparation, data collection and analysis</li>
+            <li>Co-author of DRTMC report: <em>"Exploring the Long Sustenance of Fire Hazard in Dhaka City"</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIELDWORK -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Fieldwork Experience</div>
+    <div class="field-grid">
+      <div class="field-card">
+        <div class="field-date">Feb 2025</div>
+        <div class="field-title">Land Use &amp; Land Cover Survey — Chunarughat Mouza, Habiganj</div>
+        <div class="field-body">Georeferencing and digitizing mouza maps; LULC change detection in ArcGIS; socio-economic analysis in SPSS &amp; Excel.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Feb 2024</div>
+        <div class="field-title">Hydro-Morpho-Ecological Study — Dinajpur District</div>
+        <div class="field-body">River flow and vegetation surveys; soil monolith analysis; ecology of Ashurar Beel; GPS and sediment grabber field instruments.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Jun 2023</div>
+        <div class="field-title">Socio-economic Survey — Asam Basti Community, Rangamati</div>
+        <div class="field-body">Multi-ethnic community survey; data analysis using SPSS &amp; Excel; cartographic output via ArcGIS Desktop.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Sep 2022</div>
+        <div class="field-title">Shrimp Cultivation &amp; Sunderbans Mangrove — Shyamnagar, Satkhira</div>
+        <div class="field-body">First-hand study of salinity intrusion in coastal Bangladesh and community adaptation strategies in the Sunderbans ecosystem.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL SKILLS -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Technical Proficiency</div>
+    <div class="skill-grid">
+      <div class="skill-item"><div class="skill-name">ArcGIS Desktop</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">ArcGIS Pro</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Google Earth Engine</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Python</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:68%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">R (Tidyverse · ggplot2)</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">SPSS</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Microsoft Office</div><div class="skill-level">Advanced</div><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Kobo Collect</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Canva</div><div class="skill-level">Advanced</div><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Adobe Illustrator</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div></div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Awards &amp; Recognitions</div>
+    <div class="award-list">
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-trophy"></i></div>
+        <div>
+          <div class="award-title">First Runner-Up — International Day for Disaster Risk Reduction</div>
+          <div class="award-body">Poster Presentation — <em>"Climate Resilience of Coastal Communities in Southwestern Bangladesh and How Fighting Inequality Can Bolster Their Endeavor."</em></div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-medal"></i></div>
+        <div>
+          <div class="award-title">6th Place (Final Round) — National Policy Competition 2025</div>
+          <div class="award-body">Dhaka University Chapter · Ministry of Youth and Sports, People's Republic of Bangladesh.</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-certificate"></i></div>
+        <div>
+          <div class="award-title">Certification — Environmental Management Systems (ISO 14001:2015)</div>
+          <div class="award-body">Training Workshop, issued by AJA Bangladesh.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS / WRITING -->
+  <div class="divider"></div>
+  <section class="section fade-up">
+    <div class="section-label">Writing in Newspapers</div>
+    <div class="pub-list">
+      <div class="pub-item">
+        <div class="pub-label">Op-Ed · The Financial Express</div>
+        <div class="pub-title">Rethinking University Education</div>
+        <div class="pub-meta">Khandaker, H. — 20 November 2023 · <a href="https://today.thefinancialexpress.com.bd/editorial/rethinking-university-education-1700402178" target="_blank">Read article →</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-label">Op-Ed · The Financial Express</div>
+        <div class="pub-title">Our Teachers Deserve Better</div>
+        <div class="pub-meta">Khandaker, H. — 4 July 2024 · <a href="https://today.thefinancialexpress.com.bd/editorial/our-teachers-deserve-better-1720015051" target="_blank">Read article →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="gold">©</span> <span id="footer-year"></span> Hiron Khandaker · All rights reserved ·
+    <span class="gold">khandakerhiron@gmail.com</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  /* BIO TEXTS */
+  const bioEN = `
+    <p>Hiron Khandaker is a graduate researcher in the Department of Geography and Environment at the University of Dhaka, where he is completing his Master of Science in Physical Geography and Environment. His thesis investigates the relationship between urban morphological indicators and land surface temperature in Dhaka North City Corporation, employing an integrated methodological framework that combines Multiscale Geographically Weighted Regression (MGWR) with state-of-the-art machine learning algorithms.</p>
+    <p>His broader scholarly interests encompass environmental management, climate change adaptation and mitigation, and disaster risk reduction — with a particular emphasis on the application of Geographic Information Systems (GIS), Remote Sensing (RS), and Geospatial Artificial Intelligence (GeoAI) to address pressing environmental challenges in the Global South. He has contributed as a researcher to projects funded by UNHCR and the Disaster Research Training and Management Centre (DRTMC), University of Dhaka, spanning carbon footprint mapping in humanitarian settings, urban fire hazard vulnerability analysis, and community earthquake preparedness assessment.</p>`;
+
+  const bioBN = `
+    <p>হিরন খন্দকার ঢাকা বিশ্ববিদ্যালয়ের ভূগোল ও পরিবেশ বিভাগের একজন স্নাতকোত্তর গবেষক, যিনি বর্তমানে ফিজিক্যাল জিওগ্রাফি অ্যান্ড এনভায়রনমেন্টে এম.এস. সম্পন্ন করছেন। তাঁর গবেষণার মূল বিষয় হলো নগরীর রূপতাত্ত্বিক সূচক এবং ভূ-পৃষ্ঠের তাপমাত্রার মধ্যকার সম্পর্ক বিশ্লেষণ — যেখানে মাল্টিস্কেল জিওগ্রাফিক্যালি ওয়েটেড রিগ্রেশন (MGWR) এবং উন্নত মেশিন লার্নিং অ্যালগরিদমের সমন্বয় ঘটানো হয়েছে।</p>
+    <p>তাঁর গবেষণা আগ্রহ পরিবেশ ব্যবস্থাপনা, জলবায়ু পরিবর্তন অভিযোজন এবং দুর্যোগ ঝুঁকি হ্রাসকে কেন্দ্র করে আবর্তিত। জিআইএস, রিমোট সেন্সিং এবং জিওএআই প্রযুক্তিতে দক্ষ এই গবেষক UNHCR ও DRTMC-এর অর্থায়নে রোহিঙ্গা শরণার্থী শিবিরের কার্বন ফুটপ্রিন্ট ম্যাপিং, ঢাকার অগ্নিকাণ্ড ঝুঁকি বিশ্লেষণ এবং ভূমিকম্প প্রস্তুতি মূল্যায়নে গুরুত্বপূর্ণ ভূমিকা রেখেছেন।</p>`;
+
+  /* TYPING ANIMATION */
+  const phrases = [
+    "Mapping urban heat from space.",
+    "Geospatial ML for a changing climate.",
+    "GIS · Remote Sensing · GeoAI.",
+    "Decoding cities through satellite data.",
+    "Science for disaster-resilient communities.",
+  ];
+  let pIdx=0, cIdx=0, deleting=false;
+  const typingEl = document.getElementById('typing-text');
+  function type(){
+    const phrase = phrases[pIdx];
+    if(!deleting){
+      typingEl.textContent = phrase.slice(0,++cIdx);
+      if(cIdx===phrase.length){ setTimeout(()=>{deleting=true;},2200); setTimeout(type,65);}
+      else setTimeout(type,70);
+    } else {
+      typingEl.textContent = phrase.slice(0,--cIdx);
+      if(cIdx===0){ deleting=false; pIdx=(pIdx+1)%phrases.length; setTimeout(type,400);}
+      else setTimeout(type,38);
+    }
+  }
+  setTimeout(type,700);
+
+  /* LANGUAGE TOGGLE */
+  const bioContainer = document.getElementById('bio-container');
+  const langEn = document.getElementById('lang-en');
+  const langBn = document.getElementById('lang-bn');
+  bioContainer.innerHTML = bioEN;
+  langEn.addEventListener('click',()=>{ bioContainer.innerHTML=bioEN; langEn.classList.add('active'); langBn.classList.remove('active'); });
+  langBn.addEventListener('click',()=>{ bioContainer.innerHTML=bioBN; langBn.classList.add('active'); langEn.classList.remove('active'); });
+
+  /* THEME TOGGLE */
+  const body = document.body;
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+  function applyTheme(light){
+    if(light){ body.classList.add('light'); themeIcon.className='fas fa-sun'; themeText.textContent='Light'; }
+    else      { body.classList.remove('light'); themeIcon.className='fas fa-moon'; themeText.textContent='Dark'; }
+    localStorage.setItem('theme',light?'light':'dark');
+  }
+  applyTheme(localStorage.getItem('theme')==='light');
+  document.getElementById('theme-toggle').addEventListener('click',()=>applyTheme(!body.classList.contains('light')));
+
+  /* FOOTER YEAR */
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  /* SCROLL REVEAL */
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.style.opacity='0';
+        e.target.style.animation='fadeUp .65s ease forwards';
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:.08});
+  document.querySelectorAll('.section').forEach(el=>{ el.style.opacity='0'; obs.observe(el); });
+
+})();
+</script>
+</body>
+</html>
