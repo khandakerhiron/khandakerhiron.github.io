@@ -1,408 +1,849 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiron Khandaker | Graduate Researcher</title>
-    <!-- Font Awesome 6 (free) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Hiron Khandaker | Graduate Researcher</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#080f1c;
+      --surface:rgba(12,20,38,0.82);
+      --surface-solid:#0c1426;
+      --surface2:#121f36;
+      --gold:#c9a84c;
+      --gold-dim:rgba(201,168,76,0.12);
+      --text:#dde6f0;
+      --muted:#6a7f98;
+      --border:rgba(201,168,76,0.16);
+      --accent:#3a7bd5;
+      --heat1:#ff6b35;
+      --heat2:#ff9500;
+      --radius:1rem;
+    }
+    body.light{
+      --bg:#e8eef6;
+      --surface:rgba(255,255,255,0.86);
+      --surface-solid:#ffffff;
+      --surface2:#f0f5fc;
+      --gold:#8a6010;
+      --gold-dim:rgba(138,96,16,0.09);
+      --text:#1a2236;
+      --muted:#5a6e85;
+      --border:rgba(138,96,16,0.18);
+      --accent:#2460b0;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background .4s,color .4s;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7fb;
-            color: #1e2b3a;
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
+    /* ── CANVAS BG ── */
+    #research-canvas{
+      position:fixed;inset:0;
+      width:100%;height:100%;
+      z-index:0;pointer-events:none;
+      opacity:1;
+      transition:opacity .4s;
+    }
+    body.light #research-canvas{ opacity:.45; }
 
-        /* Dark theme variables */
-        body.dark-theme {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
+    /* ── LAYOUT ── */
+    .wrapper{
+      position:relative;z-index:1;
+      max-width:960px;margin:0 auto;
+      padding:2.5rem 1.5rem 7rem;
+    }
+    .fade-up{opacity:0;transform:translateY(26px);animation:fadeUp .7s ease forwards;}
+    @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
 
-        .card {
-            max-width: 1100px;
-            width: 100%;
-            background-color: white;
-            border-radius: 2rem;
-            box-shadow: 0 20px 40px -12px rgba(0,20,40,0.25);
-            overflow: hidden;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
+    /* ── TOP BAR ── */
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:3.5rem;animation-delay:.05s;}
+    .logo-mark{
+      font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);
+      letter-spacing:.2em;text-transform:uppercase;
+      border:1px solid var(--border);padding:.35rem 1rem;border-radius:30px;
+      background:var(--gold-dim);backdrop-filter:blur(6px);
+    }
+    .bar-controls{display:flex;gap:.6rem;align-items:center;}
+    .ctrl-btn{
+      background:var(--gold-dim);backdrop-filter:blur(6px);
+      border:1px solid var(--border);color:var(--muted);
+      font-family:'DM Sans',sans-serif;font-size:.78rem;
+      padding:.32rem .9rem;border-radius:30px;cursor:pointer;transition:all .2s;
+    }
+    .ctrl-btn.active,.ctrl-btn:hover{border-color:var(--gold);color:var(--gold);}
+    .theme-pill{
+      display:flex;align-items:center;gap:.4rem;
+      background:var(--gold-dim);backdrop-filter:blur(6px);
+      border:1px solid var(--border);color:var(--muted);
+      font-size:.82rem;padding:.32rem .9rem;border-radius:30px;
+      cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+    }
+    .theme-pill:hover{border-color:var(--gold);color:var(--gold);}
 
-        body.dark-theme .card {
-            background-color: #1e1e1e;
-            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.6);
-        }
+    /* ── LEGEND BADGE (canvas key) ── */
+    .canvas-legend{
+      position:fixed;bottom:1.5rem;right:1.5rem;z-index:10;
+      display:flex;flex-direction:column;gap:.4rem;
+      background:var(--surface);backdrop-filter:blur(10px);
+      border:1px solid var(--border);border-radius:.75rem;
+      padding:.75rem 1rem;font-family:'DM Mono',monospace;font-size:.62rem;
+      color:var(--muted);letter-spacing:.06em;
+    }
+    .legend-row{display:flex;align-items:center;gap:.5rem;}
+    .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    @media(max-width:600px){.canvas-legend{display:none;}}
 
-        .card-content {
-            padding: 2.5rem;
-        }
+    /* ── HERO ── */
+    .hero{display:grid;grid-template-columns:1fr 196px;gap:2.5rem;align-items:center;margin-bottom:3rem;animation-delay:.12s;}
+    @media(max-width:620px){.hero{grid-template-columns:1fr;}.avatar-col{display:flex;justify-content:center;order:-1;}}
+    .eyebrow{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.85rem;}
+    h1.name{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.6rem,5.5vw,3.8rem);
+      font-weight:900;line-height:1.04;
+      color:var(--text);margin-bottom:.5rem;
+    }
+    .subtitle{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:1.4rem;}
+    .subtitle strong{color:var(--text);font-weight:500;}
+    .typing-wrap{
+      font-family:'Playfair Display',serif;font-size:1.15rem;font-style:italic;
+      color:var(--gold);min-height:1.8rem;margin-bottom:1.6rem;
+    }
+    .cursor{display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;margin-left:2px;animation:blink .85s step-end infinite;}
+    @keyframes blink{50%{opacity:0;}}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.8rem;}
+    .tag{
+      font-size:.7rem;font-family:'DM Mono',monospace;letter-spacing:.08em;
+      padding:.28rem .8rem;border-radius:30px;
+      border:1px solid var(--border);color:var(--muted);text-transform:uppercase;
+      transition:all .25s;cursor:default;backdrop-filter:blur(4px);
+      background:var(--gold-dim);
+    }
+    .tag:hover{border-color:var(--gold);color:var(--gold);}
+    .social-row{display:flex;gap:.7rem;flex-wrap:wrap;}
+    .social-row a{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:40px;height:40px;border-radius:50%;
+      border:1px solid var(--border);color:var(--muted);
+      font-size:1rem;text-decoration:none;transition:all .22s;
+      background:var(--gold-dim);backdrop-filter:blur(6px);
+    }
+    .social-row a:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-3px);}
 
-        /* Profile section */
-        .profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
+    /* ── AVATAR — static professional ── */
+    .avatar-col{}
+    .avatar-frame{
+      width:180px;height:180px;border-radius:50%;
+      position:relative;margin:0 auto;
+    }
+    .avatar-frame::before{
+      content:'';position:absolute;inset:-3px;
+      border-radius:50%;
+      background:conic-gradient(var(--gold) 0deg 90deg,var(--accent) 90deg 180deg,var(--gold) 180deg 270deg,var(--accent) 270deg 360deg);
+      z-index:0;
+      box-shadow:0 0 32px rgba(201,168,76,.22),0 0 8px rgba(58,123,213,.15);
+    }
+    .avatar-inner{
+      position:relative;z-index:1;
+      width:100%;height:100%;border-radius:50%;overflow:hidden;
+      border:4px solid var(--surface-solid);
+      background:var(--surface2);
+    }
+    .avatar-inner img{width:100%;height:100%;object-fit:cover;display:block;}
+    .avatar-placeholder{
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+      font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--gold);
+    }
 
-        @media (min-width: 768px) {
-            .profile {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
+    /* ── GLASS CARD (wraps all content sections) ── */
+    .glass-wrap{
+      background:var(--surface);
+      backdrop-filter:blur(14px);
+      border:1px solid var(--border);
+      border-radius:1.5rem;
+      padding:2rem 2.2rem;
+      margin-bottom:1.5rem;
+    }
+    @media(max-width:500px){.glass-wrap{padding:1.4rem 1.2rem;}}
 
-        .profile-image {
-            flex-shrink: 0;
-        }
+    /* ── SECTION ── */
+    .section{margin-bottom:2.2rem;}
+    .section:last-child{margin-bottom:0;}
+    .section-label{
+      font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.22em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;
+      display:flex;align-items:center;gap:.75rem;
+    }
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
 
-        .profile-image img {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 4px solid #2c3e50;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: border-color 0.3s;
-        }
+    /* ── BIO ── */
+    .bio p{color:var(--muted);line-height:1.9;margin-bottom:1rem;font-size:.96rem;text-align:justify;}
+    .bio p:last-child{margin-bottom:0;}
 
-        body.dark-theme .profile-image img {
-            border-color: #4a6782;
-        }
+    /* ── TIMELINE ── */
+    .timeline{display:flex;flex-direction:column;gap:1.1rem;}
+    .tcard{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);border-radius:var(--radius);
+      padding:1.2rem 1.4rem;transition:all .25s;position:relative;overflow:hidden;
+    }
+    .tcard::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:linear-gradient(180deg,var(--gold),var(--accent));
+      border-radius:3px 0 0 3px;opacity:0;transition:opacity .25s;
+    }
+    .tcard:hover{border-color:var(--gold);transform:translateX(4px);}
+    .tcard:hover::before{opacity:1;}
+    .tcard-meta{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;}
+    .tcard-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;}
+    .tcard-date{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--gold);white-space:nowrap;padding:.2rem .6rem;border:1px solid var(--border);border-radius:20px;background:var(--gold-dim);flex-shrink:0;}
+    .tcard-org{font-size:.84rem;color:var(--accent);margin-bottom:.5rem;font-weight:500;}
+    .tcard-body{font-size:.84rem;color:var(--muted);line-height:1.75;}
+    .tcard-body ul{padding-left:1.1rem;margin-top:.4rem;}
+    .tcard-body li{margin-bottom:.25rem;}
+    .badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.71rem;font-family:'DM Mono',monospace;padding:.22rem .75rem;border-radius:20px;border:1px solid rgba(58,123,213,.3);color:var(--accent);background:rgba(58,123,213,.08);margin-top:.5rem;}
 
-        .profile-details {
-            flex: 1;
-        }
+    /* ── SKILLS ── */
+    .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:.7rem;}
+    .skill-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:.75rem;padding:.75rem 1rem;transition:all .22s;}
+    .skill-item:hover{border-color:var(--gold);}
+    .skill-name{font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.35rem;}
+    .skill-level{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--muted);letter-spacing:.06em;}
+    .skill-bar{height:2px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:.5rem;overflow:hidden;}
+    .skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--accent));transform-origin:left;animation:barGrow 1.4s ease forwards;}
+    @keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
-        .name {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #0a1929;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
+    /* ── FIELDWORK ── */
+    .field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:.85rem;}
+    .field-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;transition:all .22s;}
+    .field-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+    .field-date{font-family:'DM Mono',monospace;font-size:.64rem;color:var(--gold);margin-bottom:.4rem;}
+    .field-title{font-size:.87rem;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:.4rem;}
+    .field-body{font-size:.77rem;color:var(--muted);line-height:1.6;}
 
-        body.dark-theme .name {
-            color: #bdd3f0;
-        }
+    /* ── AWARDS ── */
+    .award-list{display:flex;flex-direction:column;gap:.85rem;}
+    .award-item{display:flex;align-items:flex-start;gap:1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;transition:all .22s;}
+    .award-item:hover{border-color:var(--gold);}
+    .award-icon{font-size:1.25rem;color:var(--gold);flex-shrink:0;margin-top:.1rem;}
+    .award-title{font-size:.89rem;font-weight:600;color:var(--text);margin-bottom:.25rem;}
+    .award-body{font-size:.81rem;color:var(--muted);line-height:1.6;}
 
-        .institution {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
+    /* ── PUBLICATIONS ── */
+    .pub-list{display:flex;flex-direction:column;gap:.85rem;}
+    .pub-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;transition:all .22s;}
+    .pub-item:hover{border-color:var(--gold);}
+    .pub-label{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:.3rem;}
+    .pub-title{font-family:'Playfair Display',serif;font-style:italic;font-size:.94rem;color:var(--text);margin-bottom:.3rem;}
+    .pub-meta{font-size:.79rem;color:var(--muted);}
+    .pub-meta a{color:var(--accent);text-decoration:none;}
+    .pub-meta a:hover{text-decoration:underline;}
 
-        body.dark-theme .institution {
-            color: #9bb7d4;
-        }
+    /* ── FOOTER ── */
+    .footer{
+      margin-top:3rem;text-align:center;
+      font-family:'DM Mono',monospace;font-size:.71rem;color:var(--muted);letter-spacing:.1em;
+      padding-top:1.5rem;border-top:1px solid var(--border);
+    }
+    .footer .gold{color:var(--gold);}
 
-        .tagline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0 1.5rem 0;
-        }
-
-        .tag {
-            background-color: #e6f0fa;
-            color: #0a1929;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body.dark-theme .tag {
-            background-color: #2a3b4c;
-            color: #d0e0f0;
-        }
-
-        .bio {
-            margin: 1.5rem 0 2rem 0;
-        }
-
-        .bio p {
-            margin-bottom: 1rem;
-            text-align: justify;
-        }
-
-        .social-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 2rem 0 1rem 0;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            background-color: #f0f5fd;
-            border-radius: 50%;
-            color: #1e2b3a;
-            font-size: 1.5rem;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            background-color: #2c3e50;
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        body.dark-theme .social-links a {
-            background-color: #2d3e4f;
-            color: #cfdfef;
-        }
-
-        body.dark-theme .social-links a:hover {
-            background-color: #4f6f8f;
-            color: white;
-        }
-
-        /* Control bar for toggles */
-        .control-bar {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2.5rem 2rem 2.5rem;
-            border-top: 1px solid #e0e8f0;
-            transition: border-color 0.3s;
-        }
-
-        body.dark-theme .control-bar {
-            border-top-color: #2e3e4e;
-        }
-
-        .lang-toggle {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .lang-btn {
-            background: none;
-            border: 2px solid #b0c8da;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: #1e2b3a;
-            transition: all 0.2s;
-        }
-
-        body.dark-theme .lang-btn {
-            border-color: #4b637a;
-            color: #d0e0f0;
-        }
-
-        .lang-btn.active {
-            background-color: #1e2b3a;
-            border-color: #1e2b3a;
-            color: white;
-        }
-
-        body.dark-theme .lang-btn.active {
-            background-color: #3f5e7a;
-            border-color: #3f5e7a;
-            color: white;
-        }
-
-        .theme-btn {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #3b4f62;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        body.dark-theme .theme-btn {
-            color: #f5c542;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 1.5rem 2.5rem;
-            background-color: #f8fafd;
-            font-size: 0.95rem;
-            color: #5a6f82;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body.dark-theme .footer {
-            background-color: #151f2a;
-            color: #9bb1c4;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .card-content {
-                padding: 1.5rem;
-            }
-            .control-bar {
-                padding: 1rem 1.5rem 1.5rem 1.5rem;
-            }
-            .footer {
-                padding: 1rem 1.5rem;
-            }
-            .name {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    @media(max-width:500px){
+      .skill-grid{grid-template-columns:repeat(2,1fr);}
+      .field-grid{grid-template-columns:1fr;}
+    }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <div class="card-content">
-            <div class="profile">
-                <div class="profile-image">
-                    <!-- Make sure to upload your photo as hironkhandaker.jpg in the same folder -->
-                    <img src="hironkhandaker.jpg" alt="Hiron Khandaker">
-                </div>
-                <div class="profile-details">
-                    <h1 class="name">Hiron Khandaker</h1>
-                    <div class="institution">University of Dhaka</div>
-                    <div class="tagline">
-                        <span class="tag">GIS & Remote Sensing</span>
-                        <span class="tag">ML & Deep Learning</span>
-                        <span class="tag">GeoAI</span>
-                        <span class="tag">Urban Climate</span>
-                        <span class="tag">Heat Stress</span>
-                    </div>
 
-                    <!-- Bio section (English by default) -->
-                    <div class="bio" id="bio-container">
-                        <!-- Filled via JavaScript -->
-                    </div>
+<!-- ══ RESEARCH CANVAS ══ -->
+<canvas id="research-canvas"></canvas>
 
-                    <!-- Social media links + ORCID + CV (added) with fixed X logo -->
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/hironkhandaker" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://github.com/khandakerhiron" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="https://www.linkedin.com/in/hironkhandaker/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <!-- Fixed X (Twitter) icon: using fa-brands fa-x-twitter for better compatibility -->
-                        <a href="https://x.com/KhandakerHiron" target="_blank" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="https://www.researchgate.net/profile/Hiron-Khandaker" target="_blank" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
-                        <a href="https://www.youtube.com/@hironkhandaker" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                        <a href="https://scholar.google.com/citations?hl=en&user=uEcZf3UAAAAJ" target="_blank" aria-label="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
-                        <!-- ORCID iD link -->
-                        <a href="https://orcid.org/0009-0009-4548-5383" target="_blank" aria-label="ORCID"><i class="fab fa-orcid"></i></a>
-                        <!-- CV link - points to hironkhandaker.pdf inside repository -->
-                        <a href="hironkhandaker.pdf" target="_blank" aria-label="Curriculum Vitae (PDF)"><i class="fas fa-file-pdf"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- ══ CANVAS LEGEND ══ -->
+<div class="canvas-legend">
+  <div class="legend-row"><div class="legend-dot" style="background:#ff7c3a;opacity:.8"></div> Urban Heat Island (LST)</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#4acd8d;opacity:.8"></div> GeoAI Network Nodes</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#3a7bd5;opacity:.8"></div> Disaster Alert Pings</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#c9a84c;opacity:.8"></div> Topographic Contours</div>
+  <div class="legend-row"><div class="legend-dot" style="background:rgba(180,200,255,.6)"></div> Satellite Sweep</div>
+</div>
 
-        <!-- Control bar with language and theme toggles -->
-        <div class="control-bar">
-            <div class="lang-toggle">
-                <button class="lang-btn active" id="lang-en">English</button>
-                <button class="lang-btn" id="lang-bn">বাংলা</button>
-            </div>
-            <button class="theme-btn" id="theme-toggle" aria-label="Toggle dark mode">
-                <i class="fas fa-sun"></i> <span class="theme-text">Light</span>
-            </button>
-        </div>
+<div class="wrapper">
 
-        <!-- Footer -->
-        <div class="footer">
-            &copy; 2026 Hiron Khandaker. All rights reserved.
-        </div>
+  <!-- TOP BAR -->
+  <nav class="topbar fade-up">
+    <div class="logo-mark">hk · researcher</div>
+    <div class="bar-controls">
+      <button class="ctrl-btn active" id="lang-en">English</button>
+      <button class="ctrl-btn" id="lang-bn">বাংলা</button>
+      <button class="theme-pill" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-icon"></i>
+        <span id="theme-text">Dark</span>
+      </button>
     </div>
+  </nav>
 
-    <script>
-        (function() {
-            // Bio texts (HTML formatted)
-            const bioEN = `
-                <p>Hiron Khandaker is a dedicated researcher in the field of Physical Geography and Environment at the University of Dhaka. He is currently pursuing his Master of Science (M.S.) with a focus on urban morphology and land surface temperature using advanced machine learning models. With a strong academic foundation, his expertise spans Environmental Management, Climate Change Adaptation, and Disaster Risk Reduction.</p>
-                <p>Hiron has extensive hands-on experience in GIS and Remote Sensing, having contributed to significant projects involving carbon footprint mapping in refugee camps, fire hazard vulnerability in urban areas, and community earthquake preparedness. His technical toolkit includes proficiency in ArcGIS, Python, R, and Google Earth Engine.</p>
-            `;
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div class="hero-text">
+      <div class="eyebrow">Graduate Researcher · University of Dhaka</div>
+      <h1 class="name">Hiron<br>Khandaker</h1>
+      <p class="subtitle"><strong>M.S. Candidate</strong> — Physical Geography &amp; Environment</p>
+      <div class="typing-wrap"><span id="typing-text"></span><span class="cursor"></span></div>
+      <div class="tags">
+        <span class="tag">GIS &amp; Remote Sensing</span>
+        <span class="tag">ML &amp; Deep Learning</span>
+        <span class="tag">GeoAI</span>
+        <span class="tag">Urban Climate</span>
+        <span class="tag">Heat Stress</span>
+        <span class="tag">Disaster Risk</span>
+      </div>
+      <div class="social-row">
+        <a href="https://www.facebook.com/hironkhandaker" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://github.com/khandakerhiron" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/hironkhandaker/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://x.com/KhandakerHiron" target="_blank" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.researchgate.net/profile/Hiron-Khandaker" target="_blank" aria-label="ResearchGate"><i class="fab fa-researchgate"></i></a>
+        <a href="https://www.youtube.com/@hironkhandaker" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://scholar.google.com/citations?hl=en&user=uEcZf3UAAAAJ" target="_blank" aria-label="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+        <a href="https://orcid.org/0009-0009-4548-5383" target="_blank" aria-label="ORCID"><i class="fab fa-orcid"></i></a>
+        <a href="hironkhandaker.pdf" target="_blank" aria-label="Download CV"><i class="fas fa-file-pdf"></i></a>
+      </div>
+    </div>
+    <div class="avatar-col">
+      <div class="avatar-frame">
+        <div class="avatar-inner">
+          <img src="hironkhandaker.jpg" alt="Hiron Khandaker"
+               onerror="this.style.display='none';document.getElementById('av-ph').style.display='flex'">
+          <div class="avatar-placeholder" id="av-ph" style="display:none">HK</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            const bioBN = `
-                <p>হিরন খন্দকার ঢাকা বিশ্ববিদ্যালয়ের ভূগোল ও পরিবেশ বিভাগের একজন নিবেদিতপ্রাণ গবেষক । বর্তমানে তিনি এই বিভাগ থেকে ফিজিক্যাল জিওগ্রাফি অ্যান্ড এনভায়রনমেন্টে স্নাতকোত্তর (এম.এস.) করছেন, যেখানে তার গবেষণার মূল বিষয় হলো মেশিন লার্নিং মডেল ব্যবহারের মাধ্যমে নগরীর রূপতাত্ত্বিক সূচক এবং ভূ-পৃষ্ঠের তাপমাত্রার সম্পর্ক বিশ্লেষণ করা । স্নাতক পর্যায়ে ৩.৭৪ (৪.০০ এর মধ্যে) সিজিপিএ অর্জনকারী হিরণের প্রধান আগ্রহের বিষয়গুলো হলো পরিবেশ ব্যবস্থাপনা, জলবায়ু পরিবর্তন অভিযোজন ও প্রশমন এবং দুর্যোগ ঝুঁকি হ্রাস ।</p>
-                <p>হিরণের জিআইএস (GIS) এবং রিমোট সেন্সিং এর ওপর ব্যাপক ব্যবহারিক অভিজ্ঞতা রয়েছে। তিনি রোহিঙ্গা শরণার্থী শিবিরের কার্বন ফুটপ্রিন্ট ম্যাপিং, ঢাকা শহরের অগ্নিকাণ্ড ঝুঁকি বিশ্লেষণ এবং ভূমিকম্প প্রস্তুতি বিষয়ক বিভিন্ন গুরুত্বপূর্ণ প্রকল্পে কাজ করেছেন । কারিগরি দক্ষতার পাশাপাশি তিনি আর্কজিআইএস (ArcGIS), পাইথন (Python), আর (R) এবং গুগল আর্থ ইঞ্জিন (GEE) চালনায় দক্ষ ।</p>
-            `;
+  <!-- ABOUT -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">About</div>
+    <div class="bio" id="bio-container"></div>
+  </div>
 
-            const bioContainer = document.getElementById('bio-container');
-            const langEnBtn = document.getElementById('lang-en');
-            const langBnBtn = document.getElementById('lang-bn');
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
-            const themeText = themeToggle.querySelector('.theme-text');
+  <!-- EDUCATION -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Academic Background</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Master of Science (M.S.) — Physical Geography &amp; Environment</div>
+          <div class="tcard-date">Expected Dec 2026</div>
+        </div>
+        <div class="tcard-org">Dept. of Geography and Environment, University of Dhaka</div>
+        <div class="tcard-body">
+          <strong style="color:var(--text)">Thesis:</strong> Understanding the Effects of Urban Morphological Indicators on Land Surface Temperature in Dhaka North City Corporation — Combining Machine Learning and MGWR Models
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Bachelor of Science (B.S.) — Geography &amp; Environment</div>
+          <div class="tcard-date">16 Nov 2025</div>
+        </div>
+        <div class="tcard-org">University of Dhaka</div>
+        <div class="tcard-body">CGPA — <strong style="color:var(--gold)">3.74</strong> / 4.00</div>
+      </div>
+    </div>
+  </div>
 
-            // Set initial English bio
-            bioContainer.innerHTML = bioEN;
+  <!-- RESEARCH GRANT -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Research Grant</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Government Research Grant (2025–26)</div>
+          <div class="tcard-date">Jan 2026</div>
+        </div>
+        <div class="tcard-org">Dept. of Disaster Management · Ministry of Disaster Management &amp; Relief, Bangladesh</div>
+        <div class="tcard-body">
+          Assessing Community Earthquake Preparedness, Perception and Response in Madhabdi and Narsingdi Municipality, Narsingdi.
+        </div>
+        <div><span class="badge"><i class="fas fa-award"></i> Government-Funded Research</span></div>
+      </div>
+    </div>
+  </div>
 
-            // Language toggle logic
-            langEnBtn.addEventListener('click', function() {
-                bioContainer.innerHTML = bioEN;
-                langEnBtn.classList.add('active');
-                langBnBtn.classList.remove('active');
-            });
+  <!-- RESEARCH EXPERIENCE -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Research Experience</div>
+    <div class="timeline">
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Project Research Assistant</div>
+          <div class="tcard-date">Nov – Dec 2025</div>
+        </div>
+        <div class="tcard-org">Carbon Footprint Mapping of Humanitarian Operations in Rohingya Refugee Camps · UNHCR / NGO Forum for Energy</div>
+        <div class="tcard-body"><ul>
+          <li>Five-day intensive fieldwork in refugee camps in Ukhia and Teknaf, Cox's Bazar</li>
+          <li>Prepared FGD questionnaires and data requisition checklists</li>
+          <li>Data processing in Excel; spatial visualization and mapping in ArcGIS Desktop</li>
+          <li>Report writing and formal documentation</li>
+        </ul></div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Research Assistant</div>
+          <div class="tcard-date">Dec 2024 – May 2025</div>
+        </div>
+        <div class="tcard-org">GIS-based Fire Hazard Vulnerability Mapping of Residential-turned-Eatery Buildings · DRTMC, University of Dhaka</div>
+        <div class="tcard-body"><ul>
+          <li>Frequent field visits; questionnaire design and survey implementation</li>
+          <li>Data collection via Kobo Collect; processing and analysis in Excel</li>
+          <li>Geospatial visualization and mapping in ArcGIS Desktop</li>
+          <li>Manuscript writing for peer-reviewed journal publication</li>
+        </ul></div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-meta">
+          <div class="tcard-title">Project Research Assistant</div>
+          <div class="tcard-date">Oct 2023 – Apr 2024</div>
+        </div>
+        <div class="tcard-org">Situation Analysis of Fire Disaster in Dhaka City · DRTMC, University of Dhaka</div>
+        <div class="tcard-body"><ul>
+          <li>Literature review, questionnaire preparation, data collection and analysis</li>
+          <li>Co-author of DRTMC report: <em>"Exploring the Long Sustenance of Fire Hazard in Dhaka City"</em></li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
 
-            langBnBtn.addEventListener('click', function() {
-                bioContainer.innerHTML = bioBN;
-                langBnBtn.classList.add('active');
-                langEnBtn.classList.remove('active');
-            });
+  <!-- FIELDWORK -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Fieldwork Experience</div>
+    <div class="field-grid">
+      <div class="field-card">
+        <div class="field-date">Feb 2025</div>
+        <div class="field-title">Land Use &amp; Land Cover Survey — Chunarughat Mouza, Habiganj</div>
+        <div class="field-body">Georeferencing and digitizing mouza maps; LULC change detection in ArcGIS; socio-economic analysis in SPSS &amp; Excel.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Feb 2024</div>
+        <div class="field-title">Hydro-Morpho-Ecological Study — Dinajpur District</div>
+        <div class="field-body">River flow and vegetation surveys; soil monolith analysis; ecology of Ashurar Beel; GPS and sediment grabber field instruments.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Jun 2023</div>
+        <div class="field-title">Socio-economic Survey — Asam Basti Community, Rangamati</div>
+        <div class="field-body">Multi-ethnic community survey; data analysis using SPSS &amp; Excel; cartographic output via ArcGIS Desktop.</div>
+      </div>
+      <div class="field-card">
+        <div class="field-date">Sep 2022</div>
+        <div class="field-title">Shrimp Cultivation &amp; Sunderbans Mangrove — Shyamnagar, Satkhira</div>
+        <div class="field-body">First-hand study of salinity intrusion in coastal Bangladesh and community adaptation strategies in the Sunderbans ecosystem.</div>
+      </div>
+    </div>
+  </div>
 
-            // Dark/Light theme toggle
-            const body = document.body;
+  <!-- SKILLS -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Technical Proficiency</div>
+    <div class="skill-grid">
+      <div class="skill-item"><div class="skill-name">ArcGIS Desktop</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">ArcGIS Pro</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Google Earth Engine</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Python</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:68%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">R (Tidyverse · ggplot2)</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">SPSS</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Microsoft Office</div><div class="skill-level">Advanced</div><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Kobo Collect</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Canva</div><div class="skill-level">Advanced</div><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+      <div class="skill-item"><div class="skill-name">Adobe Illustrator</div><div class="skill-level">Intermediate</div><div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div></div>
+    </div>
+  </div>
 
-            // Check for saved theme preference
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark-theme');
-                themeIcon.className = 'fas fa-moon';
-                themeText.textContent = 'Dark';
-            }
+  <!-- AWARDS -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Awards &amp; Recognitions</div>
+    <div class="award-list">
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-trophy"></i></div>
+        <div>
+          <div class="award-title">First Runner-Up — International Day for Disaster Risk Reduction</div>
+          <div class="award-body">Poster Presentation — <em>"Climate Resilience of Coastal Communities in Southwestern Bangladesh and How Fighting Inequality Can Bolster Their Endeavor."</em></div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-medal"></i></div>
+        <div>
+          <div class="award-title">6th Place (Final Round) — National Policy Competition 2025</div>
+          <div class="award-body">Dhaka University Chapter · Ministry of Youth and Sports, People's Republic of Bangladesh.</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon"><i class="fas fa-certificate"></i></div>
+        <div>
+          <div class="award-title">Certification — Environmental Management Systems (ISO 14001:2015)</div>
+          <div class="award-body">Training Workshop, issued by AJA Bangladesh.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            themeToggle.addEventListener('click', function() {
-                body.classList.toggle('dark-theme');
-                if (body.classList.contains('dark-theme')) {
-                    themeIcon.className = 'fas fa-moon';
-                    themeText.textContent = 'Dark';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeIcon.className = 'fas fa-sun';
-                    themeText.textContent = 'Light';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
+  <!-- PUBLICATIONS -->
+  <div class="glass-wrap fade-up">
+    <div class="section-label">Writing in Newspapers</div>
+    <div class="pub-list">
+      <div class="pub-item">
+        <div class="pub-label">Op-Ed · The Financial Express</div>
+        <div class="pub-title">Rethinking University Education</div>
+        <div class="pub-meta">Khandaker, H. — 20 November 2023 · <a href="https://today.thefinancialexpress.com.bd/editorial/rethinking-university-education-1700402178" target="_blank">Read article →</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-label">Op-Ed · The Financial Express</div>
+        <div class="pub-title">Our Teachers Deserve Better</div>
+        <div class="pub-meta">Khandaker, H. — 4 July 2024 · <a href="https://today.thefinancialexpress.com.bd/editorial/our-teachers-deserve-better-1720015051" target="_blank">Read article →</a></div>
+      </div>
+    </div>
+  </div>
 
-            // Optional: Update footer year dynamically (already 2026)
-            document.querySelector('.footer').innerHTML = `&copy; ${new Date().getFullYear()} Hiron Khandaker. All rights reserved.`;
-        })();
-    </script>
+  <div class="footer">
+    <span class="gold">©</span> <span id="footer-year"></span> Hiron Khandaker · All rights reserved ·
+    <span class="gold">khandakerhiron@gmail.com</span>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+(function(){
+
+/* ════════════════════════════════════════════
+   RESEARCH-THEMED CANVAS BACKGROUND
+   Layers:
+   1. GIS Coordinate Grid (lat/lon)
+   2. Topographic Contour Lines
+   3. Urban Heat Island Blobs (LST)
+   4. GeoAI Neural-Net Nodes
+   5. Disaster Alert Pings (seismic/fire)
+   6. Satellite Sweep Line (Remote Sensing)
+════════════════════════════════════════════ */
+const canvas = document.getElementById('research-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, t = 0;
+
+function resize(){
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ── 1. GIS Coordinate Grid ── */
+function drawGrid(){
+  const isLight = document.body.classList.contains('light');
+  const col = isLight ? 'rgba(60,90,140,0.07)' : 'rgba(100,160,255,0.045)';
+  ctx.strokeStyle = col;
+  ctx.lineWidth = 1;
+  const step = 70;
+  const offX = (t * 0.15) % step;
+  const offY = (t * 0.08) % step;
+  ctx.beginPath();
+  for(let x = -step + offX; x < W + step; x += step){
+    ctx.moveTo(x, 0); ctx.lineTo(x, H);
+  }
+  for(let y = -step + offY; y < H + step; y += step){
+    ctx.moveTo(0, y); ctx.lineTo(W, y);
+  }
+  ctx.stroke();
+  // Diagonal meridian-like lines
+  ctx.strokeStyle = isLight ? 'rgba(60,90,140,0.04)' : 'rgba(100,160,255,0.025)';
+  ctx.beginPath();
+  const dstep = 200;
+  const doff = (t * 0.05) % dstep;
+  for(let i = -dstep + doff; i < W + H; i += dstep){
+    ctx.moveTo(i, 0); ctx.lineTo(i - H * 0.4, H);
+  }
+  ctx.stroke();
+}
+
+/* ── 2. Topographic Contour Lines ── */
+const numContours = 14;
+function drawContours(){
+  const isLight = document.body.classList.contains('light');
+  for(let i = 0; i < numContours; i++){
+    const phase  = i * 0.45 + t * 0.0007;
+    const yBase  = (H * 0.05) + (H * 0.9 / numContours) * i;
+    const amp    = 18 + i * 3.5;
+    const freq   = 0.006 + i * 0.0008;
+    const alpha  = isLight
+      ? 0.06 + 0.04 * Math.sin(i * 0.7)
+      : 0.10 + 0.05 * Math.sin(i * 0.7);
+    // Color shifts from cool blue at bottom to warm gold at top (like an elevation map)
+    const ratio  = i / numContours;
+    const r = Math.round(100 + 101 * ratio);
+    const g = Math.round(130 + 38 * ratio);
+    const b = Math.round(200 - 126 * ratio);
+    ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    for(let x = 0; x <= W; x += 3){
+      const y = yBase + Math.sin(x * freq + phase) * amp
+                      + Math.sin(x * freq * 1.7 + phase * 1.3) * (amp * 0.4);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+}
+
+/* ── 3. Urban Heat Island Blobs (LST / Heat Stress) ── */
+const heatBlobs = Array.from({length:7}, (_, i) => ({
+  x: Math.random() * 0.9 + 0.05,
+  y: Math.random() * 0.8 + 0.1,
+  r: 80 + Math.random() * 160,
+  speed: 0.00008 + Math.random() * 0.00012,
+  phase: Math.random() * Math.PI * 2,
+  hue: 15 + Math.random() * 30,   // orange–red range
+}));
+
+function drawHeat(){
+  const isLight = document.body.classList.contains('light');
+  heatBlobs.forEach((b, i) => {
+    const px = (b.x + Math.sin(t * b.speed + b.phase) * 0.08) * W;
+    const py = (b.y + Math.cos(t * b.speed * 1.3 + b.phase) * 0.06) * H;
+    const pulse = 1 + 0.12 * Math.sin(t * 0.0015 + b.phase);
+    const r = b.r * pulse;
+    const alpha = isLight ? 0.07 : 0.13;
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+    grad.addColorStop(0, `hsla(${b.hue}, 100%, 55%, ${alpha})`);
+    grad.addColorStop(0.5, `hsla(${b.hue + 10}, 90%, 45%, ${alpha * 0.5})`);
+    grad.addColorStop(1, 'hsla(20, 80%, 30%, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+/* ── 4. GeoAI Neural Network Nodes ── */
+const nodeCount = 22;
+const nodes = Array.from({length: nodeCount}, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  vx: (Math.random() - 0.5) * 0.00012,
+  vy: (Math.random() - 0.5) * 0.00012,
+  r: 2 + Math.random() * 2.5,
+  phase: Math.random() * Math.PI * 2,
+}));
+
+function drawNetwork(){
+  const isLight = document.body.classList.contains('light');
+  const linkAlpha = isLight ? 0.06 : 0.10;
+  const nodeAlpha = isLight ? 0.30 : 0.55;
+
+  // Move nodes
+  nodes.forEach(n => {
+    n.x += n.vx; n.y += n.vy;
+    if(n.x < 0 || n.x > 1) n.vx *= -1;
+    if(n.y < 0 || n.y > 1) n.vy *= -1;
+  });
+
+  const thresh = 0.22;
+  // Links
+  for(let i = 0; i < nodeCount; i++){
+    for(let j = i+1; j < nodeCount; j++){
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < thresh){
+        const fade = (1 - dist / thresh) * linkAlpha;
+        ctx.strokeStyle = `rgba(74,205,141,${fade})`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x * W, nodes[i].y * H);
+        ctx.lineTo(nodes[j].x * W, nodes[j].y * H);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Nodes
+  nodes.forEach((n, i) => {
+    const pulse = 0.7 + 0.3 * Math.sin(t * 0.002 + n.phase);
+    ctx.fillStyle = `rgba(74,205,141,${nodeAlpha * pulse})`;
+    ctx.beginPath();
+    ctx.arc(n.x * W, n.y * H, n.r * pulse, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+/* ── 5. Disaster Alert Pings ── */
+const pings = [
+  {x:0.18, y:0.32, col:'58,123,213', interval:3200},  // Dhaka area – earthquake
+  {x:0.72, y:0.55, col:'255,90,60',  interval:4100},  // Cox's Bazar – camps
+  {x:0.45, y:0.72, col:'255,90,60',  interval:5000},  // Sunderbans – climate
+  {x:0.62, y:0.22, col:'58,123,213', interval:3700},  // Narsingdi
+];
+pings.forEach(p => { p.wave1 = 0; p.wave2 = 0; });
+
+function drawPings(){
+  const isLight = document.body.classList.contains('light');
+  const factor = isLight ? 0.5 : 1;
+
+  pings.forEach(p => {
+    p.wave1 = (p.wave1 + 0.006) % 1;
+    p.wave2 = (p.wave2 + 0.004) % 1;
+
+    const cx = p.x * W, cy = p.y * H;
+
+    [p.wave1, p.wave2].forEach(w => {
+      const r = w * 55;
+      const a = (1 - w) * 0.4 * factor;
+      ctx.strokeStyle = `rgba(${p.col},${a})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    // Center dot
+    ctx.fillStyle = `rgba(${p.col},${0.75 * factor})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Crosshair
+    ctx.strokeStyle = `rgba(${p.col},${0.18 * factor})`;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(cx - 14, cy); ctx.lineTo(cx + 14, cy);
+    ctx.moveTo(cx, cy - 14); ctx.lineTo(cx, cy + 14);
+    ctx.stroke();
+  });
+}
+
+/* ── 6. Satellite Sweep Line (Remote Sensing) ── */
+let sweepX = -100;
+const sweepSpeed = 0.18;
+
+function drawSatellite(){
+  const isLight = document.body.classList.contains('light');
+  sweepX += sweepSpeed;
+  if(sweepX > W + 100) sweepX = -100;
+
+  const w = 6;
+  const grad = ctx.createLinearGradient(sweepX - 40, 0, sweepX + 40, 0);
+  const a = isLight ? 0.06 : 0.13;
+  grad.addColorStop(0, 'rgba(180,210,255,0)');
+  grad.addColorStop(0.5, `rgba(180,210,255,${a})`);
+  grad.addColorStop(1, 'rgba(180,210,255,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(sweepX - 40, 0, 80, H);
+
+  // Scan edge line
+  ctx.strokeStyle = `rgba(180,215,255,${a * 1.8})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(sweepX, 0);
+  ctx.lineTo(sweepX, H);
+  ctx.stroke();
+}
+
+/* ── MAIN LOOP ── */
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  t++;
+  drawGrid();
+  drawContours();
+  drawHeat();
+  drawNetwork();
+  drawPings();
+  drawSatellite();
+  requestAnimationFrame(draw);
+}
+draw();
+
+
+/* ════════════════════════════════════════
+   TYPING ANIMATION
+════════════════════════════════════════ */
+const phrases = [
+  "Mapping urban heat from space.",
+  "Geospatial ML for a changing climate.",
+  "GIS · Remote Sensing · GeoAI.",
+  "Decoding Dhaka through satellite data.",
+  "Science for disaster-resilient communities.",
+  "Land surface temperature · Urban morphology.",
+];
+let pIdx=0, cIdx=0, deleting=false;
+const typingEl = document.getElementById('typing-text');
+function type(){
+  const phrase = phrases[pIdx];
+  if(!deleting){
+    typingEl.textContent = phrase.slice(0, ++cIdx);
+    if(cIdx === phrase.length){ setTimeout(()=>{ deleting=true; }, 2400); setTimeout(type, 65); }
+    else setTimeout(type, 70);
+  } else {
+    typingEl.textContent = phrase.slice(0, --cIdx);
+    if(cIdx === 0){ deleting=false; pIdx=(pIdx+1)%phrases.length; setTimeout(type, 420); }
+    else setTimeout(type, 36);
+  }
+}
+setTimeout(type, 800);
+
+/* ════════════════════════════════════════
+   BIO TEXT
+════════════════════════════════════════ */
+const bioEN = `
+  <p>Hiron Khandaker is a graduate researcher in the Department of Geography and Environment at the University of Dhaka, where he is completing his Master of Science in Physical Geography and Environment. His thesis investigates the relationship between urban morphological indicators and land surface temperature in Dhaka North City Corporation, employing an integrated methodological framework that combines Multiscale Geographically Weighted Regression (MGWR) with state-of-the-art machine learning algorithms.</p>
+  <p>His broader scholarly interests encompass environmental management, climate change adaptation and mitigation, and disaster risk reduction — with a particular emphasis on the application of Geographic Information Systems (GIS), Remote Sensing (RS), and Geospatial Artificial Intelligence (GeoAI) to address pressing environmental challenges in the Global South. He has contributed as a researcher to projects funded by UNHCR and the Disaster Research Training and Management Centre (DRTMC), University of Dhaka, spanning carbon footprint mapping in humanitarian settings, urban fire hazard vulnerability analysis, and community earthquake preparedness assessment.</p>`;
+
+const bioBN = `
+  <p>হিরন খন্দকার ঢাকা বিশ্ববিদ্যালয়ের ভূগোল ও পরিবেশ বিভাগের একজন স্নাতকোত্তর গবেষক, যিনি বর্তমানে ফিজিক্যাল জিওগ্রাফি অ্যান্ড এনভায়রনমেন্টে এম.এস. সম্পন্ন করছেন। তাঁর গবেষণার মূল বিষয় হলো নগরীর রূপতাত্ত্বিক সূচক এবং ভূ-পৃষ্ঠের তাপমাত্রার মধ্যকার সম্পর্ক বিশ্লেষণ — যেখানে মাল্টিস্কেল জিওগ্রাফিক্যালি ওয়েটেড রিগ্রেশন (MGWR) এবং উন্নত মেশিন লার্নিং অ্যালগরিদমের সমন্বয় ঘটানো হয়েছে।</p>
+  <p>তাঁর গবেষণা আগ্রহ পরিবেশ ব্যবস্থাপনা, জলবায়ু পরিবর্তন অভিযোজন এবং দুর্যোগ ঝুঁকি হ্রাসকে কেন্দ্র করে আবর্তিত। জিআইএস, রিমোট সেন্সিং এবং জিওএআই প্রযুক্তিতে দক্ষ এই গবেষক UNHCR ও DRTMC-এর অর্থায়নে রোহিঙ্গা শরণার্থী শিবিরের কার্বন ফুটপ্রিন্ট ম্যাপিং, ঢাকার অগ্নিকাণ্ড ঝুঁকি বিশ্লেষণ এবং ভূমিকম্প প্রস্তুতি মূল্যায়নে গুরুত্বপূর্ণ ভূমিকা রেখেছেন।</p>`;
+
+const bioContainer = document.getElementById('bio-container');
+bioContainer.innerHTML = bioEN;
+
+const langEn = document.getElementById('lang-en');
+const langBn = document.getElementById('lang-bn');
+langEn.addEventListener('click',()=>{ bioContainer.innerHTML=bioEN; langEn.classList.add('active'); langBn.classList.remove('active'); });
+langBn.addEventListener('click',()=>{ bioContainer.innerHTML=bioBN; langBn.classList.add('active'); langEn.classList.remove('active'); });
+
+/* ════════════════════════════════════════
+   THEME
+════════════════════════════════════════ */
+const body = document.body;
+const themeIcon = document.getElementById('theme-icon');
+const themeText = document.getElementById('theme-text');
+function applyTheme(light){
+  if(light){ body.classList.add('light'); themeIcon.className='fas fa-sun'; themeText.textContent='Light'; }
+  else      { body.classList.remove('light'); themeIcon.className='fas fa-moon'; themeText.textContent='Dark'; }
+  localStorage.setItem('theme', light ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem('theme')==='light');
+document.getElementById('theme-toggle').addEventListener('click',()=>applyTheme(!body.classList.contains('light')));
+
+/* ════════════════════════════════════════
+   FOOTER YEAR + SCROLL REVEAL
+════════════════════════════════════════ */
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='0';
+      e.target.style.animation='fadeUp .65s ease forwards';
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.07});
+document.querySelectorAll('.glass-wrap').forEach(el=>{ el.style.opacity='0'; obs.observe(el); });
+
+})();
+</script>
 </body>
 </html>
