@@ -1044,9 +1044,8 @@ function buildFracStrip(){
 /* ==================== CALCULATE ==================== */
 function calculate(){
   // parse inputs
-  matrix=[];
+  matrix = Array.from({length: N}, () => []);
   for(let i=0;i<N;i++){
-    matrix[i]=[];
     for(let j=0;j<N;j++){
       if(i===j){ matrix[i][j]=1; continue; }
       if(i<j){
@@ -1095,8 +1094,8 @@ function calculate(){
   RI=RI_TABLE[N]||1.49;
   CR=(RI!==0)?CI/RI:0;
 
-  renderResults(norm, ws, lambdas);
   setStep(4);
+  renderResults(norm, ws, lambdas);
 }
 
 /* ==================== RENDER RESULTS ==================== */
