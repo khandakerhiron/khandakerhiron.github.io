@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AHP Calculator — Analytic Hierarchy Process</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: rgba(139,148,158,0.18);
+    --border2: rgba(139,148,158,0.32);
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #2dd4bf;
+    --accent-dim: rgba(45,212,191,0.12);
+    --accent-dim2: rgba(45,212,191,0.22);
+    --green: #3fb950;
+    --red: #f85149;
+    --amber: #e3b341;
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(45,212,191,0.06) 0%, transparent 100%);
+  }
+
+  .logo-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(45,212,191,0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  header p {
+    color: var(--text2);
+    font-size: 15px;
+    max-width: 540px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* ── SAATY SCALE REFERENCE ── */
+  .scale-bar {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .scale-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    background: var(--surface);
+  }
+
+  .scale-pill b { color: var(--accent); margin-right: 4px; }
+
+  /* ── STEPPER ── */
+  .stepper {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 2rem 1rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 90px;
+    position: relative;
+  }
+
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: calc(50% + 15px);
+    width: calc(100% - 30px);
+    height: 1px;
+    background: var(--border2);
+    transition: background 0.3s;
+  }
+
+  .step-item.done:not(:last-child)::after { background: var(--accent); }
+
+  .step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    background: var(--surface);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .step-item.active .step-num {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 0 0 4px var(--accent-dim);
+  }
+
+  .step-item.done .step-num {
+    border-color: var(--green);
+    color: var(--bg);
+    background: var(--green);
+  }
+
+  .step-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: center;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .step-item.active .step-label { color: var(--accent); }
+  .step-item.done .step-label { color: var(--text2); }
+
+  /* ── MAIN CONTAINER ── */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-top: 2rem;
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+
+  .panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-title .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .panel-sub {
+    color: var(--text2);
+    font-size: 13px;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="number"]:focus, input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  input[type="number"] { font-family: 'IBM Plex Mono', monospace; }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group { display: flex; flex-direction: column; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover { background: #5eead4; border-color: #5eead4; transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border2);
+    color: var(--text2);
+  }
+
+  .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── MATRIX ── */
+  .matrix-wrap {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .matrix-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .matrix-hint b { color: var(--accent); }
+
+  table.cmp-matrix {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 300px;
+  }
+
+  table.cmp-matrix th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  table.cmp-matrix th:first-child { text-align: left; color: var(--text3); }
+
+  table.cmp-matrix td {
+    padding: 5px 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  table.cmp-matrix td:first-child {
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    text-align: left;
+    padding-left: 0;
+    white-space: nowrap;
+  }
+
+  table.cmp-matrix td input {
+    width: 75px;
+    padding: 7px 6px;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .cell-diag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text3);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 6px;
+    width: 75px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .cell-mirror {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  /* ── FRACTION HELPER ── */
+  .frac-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 1rem;
+  }
+
+  .frac-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 9px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .frac-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  /* ── RESULTS ── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .metric-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+
+  .metric-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .metric-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  .metric-value.good { color: var(--green); }
+  .metric-value.bad  { color: var(--red); }
+  .metric-value.accent { color: var(--accent); }
+
+  .consistency-banner {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .consistency-banner.pass {
+    background: rgba(63,185,80,0.1);
+    border: 1px solid rgba(63,185,80,0.3);
+    color: var(--green);
+  }
+
+  .consistency-banner.fail {
+    background: rgba(248,81,73,0.1);
+    border: 1px solid rgba(248,81,73,0.3);
+    color: var(--red);
+  }
+
+  .consistency-banner .icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin: 2rem 0 1rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── WEIGHTS TABLE ── */
+  .weights-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-size: 13px;
+  }
+
+  .weights-table thead th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .weights-table tbody tr { border-bottom: 1px solid var(--border); }
+  .weights-table tbody tr:last-child { border-bottom: none; }
+
+  .weights-table tbody td {
+    padding: 9px 12px;
+    vertical-align: middle;
+  }
+
+  .weights-table .rank-badge {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text3);
+  }
+
+  .rank-badge.r1 { background: rgba(227,179,65,0.15); border-color: rgba(227,179,65,0.4); color: var(--amber); }
+  .rank-badge.r2 { background: rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.3); color: var(--blue); }
+  .rank-badge.r3 { background: rgba(45,212,191,0.1); border-color: rgba(45,212,191,0.3); color: var(--accent); }
+
+  .weight-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .weight-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--blue));
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .weight-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ── CHARTS ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 600px) { .charts-grid { grid-template-columns: 1fr; } }
+
+  .chart-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+
+  .chart-box h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 1rem;
+  }
+
+  canvas.chart-canvas { width: 100% !important; }
+
+  /* ── HEATMAP ── */
+  .heatmap-wrap { overflow-x: auto; }
+
+  table.heatmap-tbl {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 11px;
+  }
+
+  table.heatmap-tbl th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    padding: 4px 6px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  table.heatmap-tbl td {
+    width: 44px;
+    height: 36px;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    transition: transform 0.15s;
+  }
+
+  table.heatmap-tbl td:hover { transform: scale(1.1); z-index: 2; position: relative; }
+
+  /* ── GAUGE CANVAS ── */
+  #gaugeCanvas { display: block; margin: 0 auto; }
+
+  /* ── NORMALIZED MATRIX ── */
+  .norm-matrix-wrap { overflow-x: auto; }
+
+  table.norm-tbl {
+    border-collapse: collapse;
+    font-size: 11px;
+    min-width: 100%;
+  }
+
+  table.norm-tbl th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    padding: 5px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    white-space: nowrap;
+  }
+
+  table.norm-tbl td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    padding: 5px 8px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  table.norm-tbl td.row-avg {
+    color: var(--accent);
+    font-weight: 500;
+    background: var(--accent-dim);
+  }
+
+  /* ── LAMBDA DETAILS ── */
+  .lambda-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+
+  .lambda-table thead th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 7px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .lambda-table tbody td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .lambda-table tbody td:first-child { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 520px) {
+    header { padding: 2rem 1rem 1.5rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+    .panel { padding: 1.25rem; }
+    table.cmp-matrix td input { width: 62px; }
+    .cell-diag { width: 62px; }
+  }
+
+  /* ── PRINT-FRIENDLY ── */
+  .no-print { }
+  @media print {
+    body::before { display: none; }
+    .no-print { display: none !important; }
+    .panel { display: block !important; border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-badge">Decision Analysis Tool</div>
+  <h1>AHP <span>Calculator</span></h1>
+  <p>Analytic Hierarchy Process — pairwise comparison, priority weights, and consistency analysis</p>
+  <div class="scale-bar">
+    <div class="scale-pill"><b>1</b>Equal</div>
+    <div class="scale-pill"><b>3</b>Moderate</div>
+    <div class="scale-pill"><b>5</b>Strong</div>
+    <div class="scale-pill"><b>7</b>Very Strong</div>
+    <div class="scale-pill"><b>9</b>Extreme</div>
+    <div class="scale-pill"><b>1/3</b>Reciprocal</div>
+  </div>
+</header>
+
+<!-- STEPPER -->
+<div class="stepper" id="stepper">
+  <div class="step-item active" id="stp1">
+    <div class="step-num">1</div>
+    <div class="step-label">Criteria</div>
+  </div>
+  <div class="step-item" id="stp2">
+    <div class="step-num">2</div>
+    <div class="step-label">Names</div>
+  </div>
+  <div class="step-item" id="stp3">
+    <div class="step-num">3</div>
+    <div class="step-label">Comparisons</div>
+  </div>
+  <div class="step-item" id="stp4">
+    <div class="step-num">4</div>
+    <div class="step-label">Results</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- STEP 1 -->
+  <div class="panel active" id="step1Panel">
+    <div class="panel-title">Number of Criteria <span class="tag">Step 1</span></div>
+    <p class="panel-sub">Enter how many criteria / indicators you want to compare (2–10).</p>
+    <div style="max-width:220px;">
+      <label for="numCrit">Number of criteria</label>
+      <input type="number" id="numCrit" min="2" max="10" value="3" />
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goToStep2()">Next — Enter Names →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="panel" id="step2Panel">
+    <div class="panel-title">Criteria Names <span class="tag">Step 2</span></div>
+    <p class="panel-sub">Give each criterion a short descriptive name.</p>
+    <div class="input-row" id="namesGrid"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
+      <button class="btn btn-primary" onclick="goToStep3()">Next — Pairwise Matrix →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="panel" id="step3Panel">
+    <div class="panel-title">Pairwise Comparisons <span class="tag">Step 3</span></div>
+    <p class="panel-sub">For each pair, enter how important row is compared to column using Saaty's 1–9 scale. Use fractions like <code style="color:var(--accent)">1/3</code> when the column is more important. Click a quick-fill chip to insert a value.</p>
+
+    <div class="matrix-hint">
+      <span>💡</span>
+      <span>Upper triangle only — lower triangle auto-fills as reciprocal. Diagonal = <b>1</b>.</span>
+    </div>
+
+    <div class="frac-strip" id="fracStrip">
+      <span style="font-size:12px;color:var(--text3);align-self:center;">Quick-fill:</span>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="cmp-matrix" id="cmpTable"></table>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goToStep2()">← Back</button>
+      <button class="btn btn-primary" onclick="calculate()">Calculate AHP →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESULTS -->
+  <div class="panel" id="step4Panel">
+    <div class="panel-title">AHP Results <span class="tag">Step 4</span></div>
+
+    <!-- Consistency banner -->
+    <div class="consistency-banner" id="consBanner">
+      <span class="icon" id="consIcon"></span>
+      <span id="consMsg"></span>
+    </div>
+
+    <!-- Key metrics -->
+    <div class="results-grid" id="metricsGrid"></div>
+
+    <!-- Priority weights table -->
+    <div class="section-title">Priority Weights (Eigenvector)</div>
+    <table class="weights-table" id="weightsTable">
+      <thead><tr>
+        <th>Rank</th>
+        <th>Criterion</th>
+        <th style="width:180px">Weight Bar</th>
+        <th>Weight</th>
+        <th>% Share</th>
+      </tr></thead>
+      <tbody id="weightsTbody"></tbody>
+    </table>
+
+    <!-- Charts -->
+    <div class="section-title">Visualizations</div>
+    <div class="charts-grid">
+      <div class="chart-box" style="grid-column: span 2;" id="barBox">
+        <h4>Priority Weights — Bar Chart</h4>
+        <canvas class="chart-canvas" id="barChart" height="220"></canvas>
+      </div>
+      <div class="chart-box" id="gaugeBox">
+        <h4>Consistency Ratio Gauge</h4>
+        <canvas id="gaugeCanvas" width="240" height="160"></canvas>
+      </div>
+      <div class="chart-box" id="radarBox">
+        <h4>Criteria Weight Distribution</h4>
+        <canvas class="chart-canvas" id="radarChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="section-title">Pairwise Comparison Heatmap</div>
+    <div class="chart-box heatmap-wrap" style="margin-bottom:2rem;">
+      <div id="heatmapDiv"></div>
+    </div>
+
+    <!-- Normalized matrix -->
+    <div class="section-title">Normalized Matrix</div>
+    <div class="chart-box norm-matrix-wrap" style="margin-bottom:2rem;">
+      <div id="normMatrixDiv"></div>
+    </div>
+
+    <!-- Lambda detail table -->
+    <div class="section-title">λ Detail — Weighted Sum Vector</div>
+    <div class="chart-box" style="margin-bottom:2rem;">
+      <table class="lambda-table" id="lambdaTable">
+        <thead><tr>
+          <th>Criterion</th>
+          <th>Weight (w)</th>
+          <th>Weighted Sum (Aw)</th>
+          <th>λ = Aw / w</th>
+        </tr></thead>
+        <tbody id="lambdaTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row no-print">
+      <button class="btn btn-ghost" onclick="goToStep3()">← Revise Comparisons</button>
+      <button class="btn btn-primary" onclick="resetAll()">Start Over</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Print / Save PDF</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Built with ♥ for researchers &amp; decision-makers · AHP by Thomas L. Saaty ·
+  <a href="https://en.wikipedia.org/wiki/Analytic_hierarchy_process" target="_blank">Learn more about AHP →</a>
+</footer>
+
+<script>
+/* ==================== GLOBALS ==================== */
+let N = 3;
+let names = [];
+let matrix = [];
+let weights = [];
+let lambdaMax = 0;
+let CI = 0;
+let RI = 0;
+let CR = 0;
+let activeInput = null;  // for frac chip targeting
+
+const RI_TABLE = {1:0.00,2:0.00,3:0.58,4:0.90,5:1.12,6:1.24,7:1.32,8:1.41,9:1.45,10:1.49};
+
+/* ==================== STEPPER ==================== */
+function setStep(n) {
+  for(let i=1;i<=4;i++){
+    const el = document.getElementById('stp'+i);
+    const panel = document.getElementById('step'+i+'Panel');
+    el.className = 'step-item';
+    panel.className = 'panel';
+    if(i < n){ el.classList.add('done'); }
+    if(i === n){ el.classList.add('active'); panel.classList.add('active'); }
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ==================== STEP 1 → 2 ==================== */
+function goToStep1(){ setStep(1); }
+
+function goToStep2(){
+  N = parseInt(document.getElementById('numCrit').value);
+  if(isNaN(N)||N<2||N>10){
+    alert('Please enter a number between 2 and 10.'); return;
+  }
+  const grid = document.getElementById('namesGrid');
+  grid.innerHTML='';
+  for(let i=0;i<N;i++){
+    const prev = names[i]||'';
+    grid.innerHTML += `<div class="input-group">
+      <label for="nm${i}">Criterion ${i+1}</label>
+      <input type="text" id="nm${i}" placeholder="e.g. Cost" value="${prev}" />
+    </div>`;
+  }
+  setStep(2);
+}
+
+/* ==================== STEP 2 → 3 ==================== */
+function goToStep3(){
+  names = [];
+  for(let i=0;i<N;i++){
+    const v = document.getElementById('nm'+i).value.trim();
+    names.push(v || 'C'+(i+1));
+  }
+  buildMatrix();
+  setStep(3);
+}
+
+function buildMatrix(){
+  const tbl = document.getElementById('cmpTable');
+  let html = '<thead><tr><th></th>';
+  names.forEach(n => html += `<th>${n}</th>`);
+  html += '</tr></thead><tbody>';
+  for(let i=0;i<N;i++){
+    html += `<tr><td>${names[i]}</td>`;
+    for(let j=0;j<N;j++){
+      if(i===j){
+        html += `<td><span class="cell-diag">1</span></td>`;
+      } else if(i<j){
+        const prev = (matrix[i]&&matrix[i][j])?matrix[i][j]:'';
+        html += `<td><input type="text" id="m_${i}_${j}" value="${prev||''}"
+          placeholder="1–9" onfocus="activeInput=this"
+          oninput="mirrorCell(${i},${j})" /></td>`;
+      } else {
+        html += `<td><span class="cell-mirror" id="mir_${i}_${j}">—</span></td>`;
+      }
+    }
+    html += '</tr>';
+  }
+  html += '</tbody>';
+  tbl.innerHTML = html;
+
+  // restore matrix values into mirrors
+  for(let i=0;i<N;i++){
+    for(let j=i+1;j<N;j++){
+      if(matrix[i]&&matrix[i][j]){
+        const inp=document.getElementById(`m_${i}_${j}`);
+        if(inp) inp.value=matrix[i][j];
+        updateMirror(i,j,matrix[i][j]);
+      }
+    }
+  }
+
+  buildFracStrip();
+}
+
+function parseFrac(str){
+  str=str.trim();
+  if(str.includes('/')){
+    const p=str.split('/');
+    if(p.length===2){
+      const n=parseFloat(p[0]), d=parseFloat(p[1]);
+      if(!isNaN(n)&&!isNaN(d)&&d!==0) return n/d;
+    }
+    return NaN;
+  }
+  return parseFloat(str);
+}
+
+function mirrorCell(i,j){
+  const inp=document.getElementById(`m_${i}_${j}`);
+  if(!inp) return;
+  const v=parseFrac(inp.value);
+  if(!isNaN(v)&&v>0) updateMirror(i,j,v);
+  else document.getElementById(`mir_${j}_${i}`).textContent='—';
+}
+
+function updateMirror(i,j,v){
+  const mir=document.getElementById(`mir_${j}_${i}`);
+  if(mir) mir.textContent=(1/v).toFixed(4);
+}
+
+function buildFracStrip(){
+  const strip=document.getElementById('fracStrip');
+  const vals=['1','2','3','4','5','6','7','8','9','1/2','1/3','1/4','1/5','1/6','1/7','1/8','1/9'];
+  strip.innerHTML='<span style="font-size:12px;color:var(--text3);align-self:center;">Quick-fill:</span>';
+  vals.forEach(v=>{
+    const chip=document.createElement('span');
+    chip.className='frac-chip';
+    chip.textContent=v;
+    chip.onclick=()=>{
+      if(activeInput){
+        activeInput.value=v;
+        const ids=activeInput.id.split('_');
+        mirrorCell(parseInt(ids[1]),parseInt(ids[2]));
+      }
+    };
+    strip.appendChild(chip);
+  });
+}
+
+/* ==================== CALCULATE ==================== */
+function calculate(){
+  // parse inputs
+  matrix=[];
+  for(let i=0;i<N;i++){
+    matrix[i]=[];
+    for(let j=0;j<N;j++){
+      if(i===j){ matrix[i][j]=1; continue; }
+      if(i<j){
+        const inp=document.getElementById(`m_${i}_${j}`);
+        if(!inp||inp.value.trim()===''){
+          alert(`Please fill in the comparison: "${names[i]}" vs "${names[j]}"`);
+          return;
+        }
+        const v=parseFrac(inp.value);
+        if(isNaN(v)||v<=0){
+          alert(`Invalid value for "${names[i]}" vs "${names[j]}". Use numbers or fractions like 1/3.`);
+          return;
+        }
+        matrix[i][j]=v;
+        matrix[j][i]=1/v;
+      }
+    }
+  }
+
+  // Column sums
+  const colSums=Array(N).fill(0);
+  for(let j=0;j<N;j++) for(let i=0;i<N;i++) colSums[j]+=matrix[i][j];
+
+  // Normalize
+  const norm=[];
+  for(let i=0;i<N;i++){
+    norm[i]=[];
+    for(let j=0;j<N;j++) norm[i][j]=matrix[i][j]/colSums[j];
+  }
+
+  // Priority vector (row averages)
+  weights=[];
+  for(let i=0;i<N;i++){
+    weights[i]=norm[i].reduce((a,b)=>a+b,0)/N;
+  }
+
+  // Weighted sum vector
+  const ws=Array(N).fill(0);
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++) ws[i]+=matrix[i][j]*weights[j];
+
+  // Lambda values
+  const lambdas=weights.map((w,i)=>ws[i]/w);
+  lambdaMax=lambdas.reduce((a,b)=>a+b,0)/N;
+
+  CI=(lambdaMax-N)/(N-1);
+  RI=RI_TABLE[N]||1.49;
+  CR=(RI!==0)?CI/RI:0;
+
+  renderResults(norm, ws, lambdas);
+  setStep(4);
+}
+
+/* ==================== RENDER RESULTS ==================== */
+function renderResults(norm, ws, lambdas){
+  // Consistency banner
+  const banner=document.getElementById('consBanner');
+  const icon=document.getElementById('consIcon');
+  const msg=document.getElementById('consMsg');
+  if(CR<0.1){
+    banner.className='consistency-banner pass';
+    icon.textContent='✓';
+    msg.textContent=`Judgments are CONSISTENT — CR = ${CR.toFixed(4)} (threshold: 0.10). Your pairwise comparisons are acceptably coherent.`;
+  } else {
+    banner.className='consistency-banner fail';
+    icon.textContent='✗';
+    msg.textContent=`Judgments are INCONSISTENT — CR = ${CR.toFixed(4)} (threshold: 0.10). Consider revising your pairwise comparisons.`;
+  }
+
+  // Metrics
+  const mg=document.getElementById('metricsGrid');
+  const crClass=CR<0.1?'good':'bad';
+  mg.innerHTML=`
+    <div class="metric-card"><div class="metric-label">λ MAX</div><div class="metric-value accent">${lambdaMax.toFixed(4)}</div></div>
+    <div class="metric-card"><div class="metric-label">CI</div><div class="metric-value">${CI.toFixed(4)}</div></div>
+    <div class="metric-card"><div class="metric-label">RI (n=${N})</div><div class="metric-value">${RI.toFixed(2)}</div></div>
+    <div class="metric-card"><div class="metric-label">CR</div><div class="metric-value ${crClass}">${CR.toFixed(4)}</div></div>
+    <div class="metric-card"><div class="metric-label">CRITERIA (n)</div><div class="metric-value">${N}</div></div>
+  `;
+
+  // Weights table (sorted descending)
+  const sortedIdx=[...Array(N).keys()].sort((a,b)=>weights[b]-weights[a]);
+  const rankClasses=['r1','r2','r3'];
+  let rows='';
+  sortedIdx.forEach((ci,rank)=>{
+    const w=weights[ci];
+    const barW=Math.round(w*100*2);
+    rows+=`<tr>
+      <td><span class="rank-badge ${rankClasses[rank]||''}">${rank+1}</span></td>
+      <td>${names[ci]}</td>
+      <td><div class="weight-bar-wrap"><div class="weight-bar" style="width:${barW}px;max-width:150px;min-width:4px"></div></div></td>
+      <td class="weight-num">${w.toFixed(4)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">${(w*100).toFixed(2)}%</td>
+    </tr>`;
+  });
+  document.getElementById('weightsTbody').innerHTML=rows;
+
+  // Lambda table
+  let lRows='';
+  names.forEach((nm,i)=>{
+    lRows+=`<tr>
+      <td>${nm}</td>
+      <td>${weights[i].toFixed(4)}</td>
+      <td>${ws[i].toFixed(4)}</td>
+      <td>${lambdas[i].toFixed(4)}</td>
+    </tr>`;
+  });
+  lRows+=`<tr style="border-top:2px solid var(--border2)">
+    <td colspan="3" style="color:var(--text3);text-align:right;padding-right:8px">λ_max =</td>
+    <td style="color:var(--accent);font-weight:500">${lambdaMax.toFixed(4)}</td>
+  </tr>`;
+  document.getElementById('lambdaTbody').innerHTML=lRows;
+
+  // Normalized matrix
+  let nHtml='<table class="norm-tbl"><thead><tr><th></th>';
+  names.forEach(n=>nHtml+=`<th>${n}</th>`);
+  nHtml+='<th style="color:var(--accent)">w</th></tr></thead><tbody>';
+  for(let i=0;i<N;i++){
+    nHtml+=`<tr><td style="color:var(--accent)">${names[i]}</td>`;
+    for(let j=0;j<N;j++) nHtml+=`<td>${norm[i][j].toFixed(4)}</td>`;
+    nHtml+=`<td class="row-avg">${weights[i].toFixed(4)}</td></tr>`;
+  }
+  nHtml+='</tbody></table>';
+  document.getElementById('normMatrixDiv').innerHTML=nHtml;
+
+  // Heatmap
+  let hHtml='<table class="heatmap-tbl"><thead><tr><th></th>';
+  names.forEach(n=>hHtml+=`<th>${n}</th>`);
+  hHtml+='</tr></thead><tbody>';
+  const allVals=matrix.flat();
+  const minV=Math.min(...allVals), maxV=Math.max(...allVals);
+  for(let i=0;i<N;i++){
+    hHtml+=`<tr><th>${names[i]}</th>`;
+    for(let j=0;j<N;j++){
+      const v=matrix[i][j];
+      const bg=heatColor(v,minV,maxV);
+      const textCol=v>3?'rgba(255,255,255,0.9)':'var(--text)';
+      hHtml+=`<td style="background:${bg};color:${textCol}">${v<1?v.toFixed(2):v.toFixed(1)}</td>`;
+    }
+    hHtml+='</tr>';
+  }
+  hHtml+='</tbody></table>';
+  document.getElementById('heatmapDiv').innerHTML=hHtml;
+
+  // Charts
+  renderBarChart();
+  renderRadarChart();
+  renderGauge();
+}
+
+function heatColor(v, minV, maxV){
+  // green (1) = neutral, dark green = high, blue-ish = low
+  const norm=(v-1)/(Math.max(maxV,2)-1);
+  const clamped=Math.max(0,Math.min(1,norm));
+  const r=Math.round(13+clamped*(200-13));
+  const g=Math.round(117+clamped*(185-117));
+  const b=Math.round(128+clamped*(80-128));
+  return `rgba(${r},${g},${b},0.75)`;
+}
+
+/* ── BAR CHART ── */
+let barChartInst=null;
+function renderBarChart(){
+  if(barChartInst){ barChartInst.destroy(); barChartInst=null; }
+  const ctx=document.getElementById('barChart').getContext('2d');
+  const sortedIdx=[...Array(N).keys()].sort((a,b)=>weights[b]-weights[a]);
+  const colors=sortedIdx.map((_,i)=>{
+    const t=i/(N-1||1);
+    return `rgba(${Math.round(45+t*50)},${Math.round(212-t*80)},${Math.round(191+t*30)},0.85)`;
+  });
+  barChartInst=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:sortedIdx.map(i=>names[i]),
+      datasets:[{
+        label:'Priority Weight',
+        data:sortedIdx.map(i=>+weights[i].toFixed(4)),
+        backgroundColor:colors,
+        borderColor:colors.map(c=>c.replace('0.85','1')),
+        borderWidth:1,
+        borderRadius:5,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:ctx=>`Weight: ${ctx.parsed.y.toFixed(4)} (${(ctx.parsed.y*100).toFixed(2)}%)`
+          }
+        }
+      },
+      scales:{
+        y:{
+          beginAtZero:true,
+          grid:{color:'rgba(139,148,158,0.12)'},
+          ticks:{color:'#8b949e',font:{family:'IBM Plex Mono',size:11}},
+        },
+        x:{
+          grid:{display:false},
+          ticks:{color:'#8b949e',font:{family:'IBM Plex Mono',size:11}},
+        }
+      }
+    }
+  });
+}
+
+/* ── RADAR CHART ── */
+let radarChartInst=null;
+function renderRadarChart(){
+  if(radarChartInst){ radarChartInst.destroy(); radarChartInst=null; }
+  const ctx=document.getElementById('radarChart').getContext('2d');
+  radarChartInst=new Chart(ctx,{
+    type:'radar',
+    data:{
+      labels:names,
+      datasets:[{
+        label:'Weight',
+        data:weights.map(w=>+w.toFixed(4)),
+        backgroundColor:'rgba(45,212,191,0.15)',
+        borderColor:'rgba(45,212,191,0.8)',
+        pointBackgroundColor:'rgba(45,212,191,1)',
+        pointRadius:4,
+        borderWidth:2,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        r:{
+          beginAtZero:true,
+          grid:{color:'rgba(139,148,158,0.15)'},
+          angleLines:{color:'rgba(139,148,158,0.15)'},
+          pointLabels:{color:'#8b949e',font:{family:'IBM Plex Mono',size:11}},
+          ticks:{color:'#8b949e',font:{family:'IBM Plex Mono',size:10},backdropColor:'transparent'}
+        }
+      }
+    }
+  });
+}
+
+/* ── GAUGE ── */
+function renderGauge(){
+  const canvas=document.getElementById('gaugeCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const cx=W/2, cy=H*0.78, r=80;
+  const startA=Math.PI, endA=2*Math.PI;
+
+  // Background arc
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,startA,endA);
+  ctx.lineWidth=14;
+  ctx.strokeStyle='rgba(139,148,158,0.15)';
+  ctx.stroke();
+
+  // Color zones
+  const zones=[
+    {from:0,   to:0.1, color:'rgba(63,185,80,0.7)'},
+    {from:0.1, to:0.2, color:'rgba(227,179,65,0.7)'},
+    {from:0.2, to:0.5, color:'rgba(248,81,73,0.7)'},
+  ];
+  const maxCR=0.5;
+  zones.forEach(z=>{
+    const sa=Math.PI+Math.PI*(z.from/maxCR);
+    const ea=Math.PI+Math.PI*(Math.min(z.to,maxCR)/maxCR);
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,sa,ea);
+    ctx.lineWidth=14;
+    ctx.strokeStyle=z.color;
+    ctx.stroke();
+  });
+
+  // Needle
+  const crClamped=Math.min(CR,maxCR);
+  const needleA=Math.PI+Math.PI*(crClamped/maxCR);
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  const nx=cx+Math.cos(needleA)*(r-12);
+  const ny=cy+Math.sin(needleA)*(r-12);
+  ctx.lineTo(nx,ny);
+  ctx.strokeStyle=CR<0.1?'#3fb950':'#f85149';
+  ctx.lineWidth=2.5;
+  ctx.lineCap='round';
+  ctx.stroke();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx,cy,5,0,2*Math.PI);
+  ctx.fillStyle=CR<0.1?'#3fb950':'#f85149';
+  ctx.fill();
+
+  // Threshold marker
+  const thA=Math.PI+Math.PI*(0.1/maxCR);
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(thA)*(r-18),cy+Math.sin(thA)*(r-18));
+  ctx.lineTo(cx+Math.cos(thA)*(r+4),cy+Math.sin(thA)*(r+4));
+  ctx.strokeStyle='rgba(255,255,255,0.5)';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle='#8b949e';
+  ctx.font='10px IBM Plex Mono, monospace';
+  ctx.textAlign='center';
+  ctx.fillText('0',cx-r-12,cy+4);
+  ctx.fillText('0.5',cx+r+14,cy+4);
+
+  // CR value
+  ctx.font='bold 18px IBM Plex Mono, monospace';
+  ctx.fillStyle=CR<0.1?'#3fb950':'#f85149';
+  ctx.fillText(CR.toFixed(4),cx,cy-18);
+
+  ctx.font='11px IBM Plex Mono, monospace';
+  ctx.fillStyle='#8b949e';
+  ctx.fillText('CR',cx,cy-4);
+
+  // Threshold label
+  ctx.font='10px IBM Plex Mono, monospace';
+  ctx.fillStyle='rgba(255,255,255,0.45)';
+  const lx=cx+Math.cos(thA)*(r+20), ly=cy+Math.sin(thA)*(r+20);
+  ctx.fillText('0.1',lx,ly);
+}
+
+/* ==================== RESET ==================== */
+function resetAll(){
+  names=[];matrix=[];weights=[];
+  N=3;
+  document.getElementById('numCrit').value=3;
+  document.getElementById('namesGrid').innerHTML='';
+
+  if(barChartInst){barChartInst.destroy();barChartInst=null;}
+  if(radarChartInst){radarChartInst.destroy();radarChartInst=null;}
+
+  setStep(1);
+}
+</script>
+</body>
+</html>
